@@ -35,11 +35,16 @@ public class Management {
     }
 
     public void ajouterUtilisateur(Orthophoniste user) {
+        System.out.println("A");
         chargerUtilisateurs(); // Load existing users
+        System.out.println("B");
 
         if (!docs.containsKey(user.getNom())) {
+        System.out.println("C");
+
             docs.put(user.getNom(), user);
             sauvegarderUtilisateurs(); // Save the updated users, including the new user
+            
             System.out.println("Orthophoniste ajouté avec succès !");
         } else {
             System.out.println("Pseudo déjà utilisé. Veuillez choisir un autre pseudo.");

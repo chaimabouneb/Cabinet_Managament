@@ -1,6 +1,8 @@
 package cabinet_management;
 
-public class Orthophoniste {
+import java.io.Serializable;
+
+public class Orthophoniste implements Serializable {
     private String nom;
     private String prenom;
     private String adresse;
