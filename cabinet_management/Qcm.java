@@ -6,6 +6,11 @@ public class Qcm extends Question implements Reponse {
     private List<Integer> reponses;
     private List<Integer> correctreponse;
 
+    public Qcm(String question, List<String> options, Cat_Quest type, List<Integer> cor, int n) {
+        super(question, options, type, n);
+        this.correctreponse = cor;
+    }
+
     @Override
     public void setuserselction(List<Integer> reponses) {
         // Validate user answer indices
@@ -16,6 +21,32 @@ public class Qcm extends Question implements Reponse {
         }
         this.reponses = reponses;
 
+    }
+
+    @Override
+
+    public void setScore() {
+        int totalCorrectChoices = correctreponse.size();
+        int userCorrectChoices = 0;
+
+        // Count the number of correct choices selected by the user
+        for (int userChoice : reponses) {
+            if (correctreponse.contains(userChoice)) {
+                userCorrectChoices++;
+            }
+        }
+
+        // Calculate the score
+        double score;
+        if (totalCorrectChoices == 0) {
+            // No correct choices, so score is 0
+            score = 0;
+        } else {
+            score = ((double) userCorrectChoices / totalCorrectChoices) * super.note;
+        }
+
+        // Set the score
+        super.score = score;
     }
 
     public void setCorrectAnswerIndices(List<Integer> correctAnswerIndices) {

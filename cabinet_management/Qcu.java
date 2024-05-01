@@ -7,11 +7,23 @@ public class Qcu extends Question implements Reponse {
     private int reponse;
     private int correctanswer;
 
-    public Qcu(String question, List<String> options, Cat_Quest type, int cor) {
-        super(question, options, type);
+    public Qcu(String question, List<String> options, Cat_Quest type, int cor, int n) {
+        super(question, options, type, n);
         this.correctanswer = cor;
     }
-
+    @Override
+    public void setScore() {
+        // Calculate the score
+        double score;
+        if (reponse == correctanswer) {
+            score = super.note; // Full score for a correct answer
+        } else {
+            score = 0; // 0 score for an incorrect answer
+        }
+    
+        // Set the score
+        super.score = score;
+    }
     public int getCorrectAnswer() {
         return correctanswer;
     }
