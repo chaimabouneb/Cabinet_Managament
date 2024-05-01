@@ -9,17 +9,27 @@ public class TestExo extends Test {
         this.exos = EXOS;
     }
 
+    public void ajouterExo(Exo e) {
+        exos.add(e);
+    }
+
     @Override
-    public double Calc_Score() {
+    public void Calc_Score() {
         double totalScore = 0;
 
         // Iterate over each question and add its score to the total score
         for (Exo question : exos) {
-
-            totalScore += question.getScore();
+            int index = 0;
+            double s = 0;
+            for (Exo exo : exos) {
+                if (exo.consigne.equals(question)) {
+                    index++;
+                    s += exo.getScore();
+                }
+            }
+            totalScore += (s / index);
         }
-
-        return totalScore;
+        super.Test(totalScore);
     }
 
 }

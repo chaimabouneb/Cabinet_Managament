@@ -1,7 +1,7 @@
 package cabinet_management;
 
 public class Exo {
-    private String consigne;
+    public String consigne;
     private String material;
     private int note;
     private double score;

@@ -5,9 +5,9 @@ package cabinet_management;
  */
 public class Main {
 
-    @Override
-    public String toString() {
-        return "Main []";
+    public static void main(String[] args) {
+       LoginForme l = new LoginForme();
+       l.initialize();
     }
 
 }

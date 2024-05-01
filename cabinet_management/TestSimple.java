@@ -9,8 +9,12 @@ public class TestSimple extends Test {
         this.questions = questions;
     }
 
+    public void ajouterQuest(Question q) {
+        questions.add(q);
+    }
+
     @Override
-    public double Calc_Score() {
+    public void Calc_Score() {
         double totalScore = 0;
 
         // Iterate over each question and add its score to the total score
@@ -18,8 +22,8 @@ public class TestSimple extends Test {
             question.setScore(); // Ensure each question's score is calculated
             totalScore += question.getScore();
         }
+        super.Test(totalScore);
 
-        return totalScore;
     }
 
 }
