@@ -18,9 +18,20 @@ public class Management {
 
     }
 
-    public Orthophoniste authentifier(String pseudo) {
+    public boolean authentifier(String pseudo) {
         chargerUtilisateurs();
         if (docs.containsKey(pseudo)) {
+            System.out.println("il existe");
+            return true;
+        } else {
+            System.out.println("il n'existe pas !");
+            return false;
+        }
+    }
+
+    public Orthophoniste getUser(String pseudo) {
+        chargerUtilisateurs();
+        if (authentifier(pseudo)) {
             System.out.println("il existe");
             return docs.get(pseudo);
         } else {
@@ -40,11 +51,11 @@ public class Management {
         System.out.println("B");
 
         if (!docs.containsKey(user.getNom())) {
-        System.out.println("C");
+            System.out.println("C");
 
             docs.put(user.getNom(), user);
             sauvegarderUtilisateurs(); // Save the updated users, including the new user
-            
+
             System.out.println("Orthophoniste ajouté avec succès !");
         } else {
             System.out.println("Pseudo déjà utilisé. Veuillez choisir un autre pseudo.");

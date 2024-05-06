@@ -5,4 +5,7 @@ public class Adulte extends Patient {
     private String profession;
     private String num;
 
+    public void Adulte() {
+    };
+
 }

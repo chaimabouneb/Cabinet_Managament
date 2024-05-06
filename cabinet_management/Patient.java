@@ -2,7 +2,7 @@ package cabinet_management;
 
 import java.time.LocalDate;
 
-public class Patient {
+public abstract class Patient {
     private String nom;
     private String prenom;
     private String adresse;

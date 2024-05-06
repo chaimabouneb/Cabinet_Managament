@@ -33,4 +33,8 @@ public class Dossier {
         }
     }
 
+    public Double getNum() {
+        return numerodossier;
+    }
+
 }
