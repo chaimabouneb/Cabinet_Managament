@@ -129,6 +129,7 @@ public class FXMLDocumentController implements Initializable {
 
                 alert.confirmationMsg(name + " Login Successful !");
                 Data.name = name;
+                Data.orthophoniste = authenticatedUser;
                 Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
                 Stage stage = new Stage();
                 stage.setTitle("Clinic Management System");

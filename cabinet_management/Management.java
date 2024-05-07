@@ -68,8 +68,8 @@ public class Management {
             System.out.println("Sauvegarde des utilisateurs effectuée avec succès !");
         } catch (IOException e) {
             System.out.println("Erreur lors de la sauvegarde des utilisateurs : " + e.getMessage());
+            e.printStackTrace(); // Print the stack trace for debugging purposes
         }
-
     }
 
     public void chargerUtilisateurs() {
