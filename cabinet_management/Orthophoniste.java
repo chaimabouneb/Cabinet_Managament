@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.TreeSet;
 
 public class Orthophoniste implements Serializable {
@@ -14,9 +15,10 @@ public class Orthophoniste implements Serializable {
     private String mtpasse;
     private String email;
     private HashMap<Double, Dossier> patients = null;
+    protected Set<Patient> patient;
 
     protected TreeSet<RendezVous> rendezVousSet = new TreeSet<>();
-    private TreeSet<Consultation> ConsultationSet = new TreeSet<Consultation>();
+    private TreeSet<Consultation> ConsultationSet = null;
     private TreeSet<Suivi> SuiviSet = new TreeSet<>();
     private TreeSet<Atelier> AtelierSet = new TreeSet<>();
 
@@ -40,8 +42,8 @@ public class Orthophoniste implements Serializable {
     }
 
     public void ajouterc(Consultation c) {
-        ConsultationSet.add(c);
-        rendezVousSet.add(c);
+        this.ConsultationSet.add(c);
+        this.rendezVousSet.add(c);
     }
 
     public void ajouters(Suivi c) {

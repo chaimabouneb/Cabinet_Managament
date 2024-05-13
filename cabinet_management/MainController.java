@@ -151,6 +151,8 @@ public class MainController implements Initializable {
 
     @FXML
     private TableView<RendezVous> tableAtelier;
+    @FXML
+    private TableView<Patient> patientstab;
 
     @FXML
     private TableView<RendezVous> tableConsultaion;
@@ -242,22 +244,42 @@ public class MainController implements Initializable {
         }
     }
 
+    public ObservableList<Patient> PateintsgetData() {
+        ObservableList<Patient> listData = FXCollections.observableArrayList();
+
+        for (Patient r : Data.orthophoniste.patient) {
+            listData.add(r);
+        }
+        return listData;
+    }
+
+    public void showPatientsData() {
+
+        ObservableList<Patient> appoinmentListData = PateintsgetData();
+
+        patientstab.setItems(appoinmentListData);
+    }
+
     public ObservableList<RendezVous> appointmentGetData() {
         ObservableList<RendezVous> listData = FXCollections.observableArrayList();
         RendezVous appData = null;
 
         for (RendezVous r : Data.orthophoniste.rendezVousSet) {
+            System.out.println("1");
 
-            if (type_app.getValue() == "Consultation" && r.getClass().getName() == "Consultation") {
-                appData = new Consultation(((Consultation) r).getage(), ((Consultation) r).getnom(), r.getDate(),
-                        r.getHeure());
-            } else if (type_app.getValue() == "Suivi" && r.getClass().getName() == "Suivi") {
-                appData = new Suivi();
+            appData = new Consultation(((Consultation) r).getage(), ((Consultation) r).getnom(), r.getDate(),
+                    r.getHeure());
+            System.out.println(appData.getDate());
 
-            } else if (type_app.getValue() == "atelier" && r.getClass().getName() == "Atelier") {
-                appData = new Atelier();
-            }
-
+            /*
+             * if (type_app.getValue() == "Suivi" && r.getClass().getName() == "Suivi") {
+             * appData = new Suivi();
+             * 
+             * } else if (type_app.getValue() == "atelier" && r.getClass().getName() ==
+             * "Atelier") {
+             * appData = new Atelier();
+             * }
+             */
             // STORE ALL DATA
             listData.add(appData);
         }
@@ -268,17 +290,18 @@ public class MainController implements Initializable {
     public void showAppData() {
 
         ObservableList<RendezVous> appoinmentListData = appointmentGetData();
-        if (type_app.getValue() == "Consultation") {
-            tableConsultaion.setItems(appoinmentListData);
 
-        } else if (type_app.getValue() == "Suivi") {
-            tablesuivi.setItems(appoinmentListData);
+        tableConsultaion.setItems(appoinmentListData);
 
-        } else if (type_app.getValue() == "atelier") {
-            tableAtelier.setItems(appoinmentListData);
-
-        }
-
+        /*
+         * if (type_app.getValue() == "Suivi") {
+         * tablesuivi.setItems(appoinmentListData);
+         * 
+         * } else if (type_app.getValue() == "atelier") {
+         * tableAtelier.setItems(appoinmentListData);
+         * 
+         * }
+         */
         // appointments_col_name.setCellValueFactory(new
         // PropertyValueFactory<>("name"));
         /*
@@ -356,11 +379,13 @@ public class MainController implements Initializable {
         LocalDate currentDate = LocalDate.now();
         LocalTime currentTime = LocalTime.now();
         System.out.println(Data.orthophoniste.getNom());
+        Consultation c = new Consultation(13, "bb", currentDate, currentTime);
+        Data.ad(c);
 
-        for (Consultation x : Data.orthophoniste.getConsultations()) {
-            System.out.println(x.getnom());
+        for (Consultation x : Data.ConsultationSet) {
+            System.out.println(x.getDate());
         }
 
-        // showAppData();
+        showAppData();
     }
 }

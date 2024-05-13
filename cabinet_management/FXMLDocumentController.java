@@ -78,7 +78,7 @@ public class FXMLDocumentController implements Initializable {
 
     }
 
-    public void registerAccount() {
+    public void registerAccount() throws IOException {
         management = new Management();
         if (register_adress.getText().isEmpty() ||
                 register_lastname.getText().isEmpty() ||
@@ -104,8 +104,16 @@ public class FXMLDocumentController implements Initializable {
                 System.out.println(name);
                 management.ajouterUtilisateur(newOrthophoniste); // Add the new user
                 alert.succesMessage(name + "added successfully!");
+                Data.name = name;
+                Data.orthophoniste = authenticatedUser;
+                Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
+                Stage stage = new Stage();
+                stage.setTitle("Clinic Management System");
+                stage.setScene(new Scene(root));
 
-                registerClear();
+                stage.show();
+                register_btn.getScene().getWindow().hide();
+
             }
         }
     }
@@ -130,6 +138,7 @@ public class FXMLDocumentController implements Initializable {
                 alert.confirmationMsg(name + " Login Successful !");
                 Data.name = name;
                 Data.orthophoniste = authenticatedUser;
+                Data.ConsultationSet = authenticatedUser.getConsultations();
                 Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
                 Stage stage = new Stage();
                 stage.setTitle("Clinic Management System");
