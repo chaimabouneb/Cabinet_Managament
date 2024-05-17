@@ -379,12 +379,14 @@ public class MainController implements Initializable {
         LocalDate currentDate = LocalDate.now();
         LocalTime currentTime = LocalTime.now();
         System.out.println(Data.orthophoniste.getNom());
-        Consultation c = new Consultation(13, "bb", currentDate, currentTime);
-        Data.ad(c);
+        Consultation c = new Consultation(13, "nb", currentDate, currentTime);
+        //Data.ad(c);
 
-        for (Consultation x : Data.ConsultationSet) {
-            System.out.println(x.getDate());
-        }
+        /*
+         * for (Consultation x : Data.ConsultationSet) {
+         * System.out.println(x.getDate());
+         * }
+         */
 
         showAppData();
     }

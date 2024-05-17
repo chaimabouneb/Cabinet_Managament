@@ -41,6 +41,20 @@ public class Orthophoniste implements Serializable {
         return false; // RendezVous with the given date and hour does not exist
     }
 
+    public boolean authentifierPasse(String passe) throws PassIncorrectException {
+        if (this.mtpasse.equals(passe)) {
+            return true;
+        } else {
+            throw new PassIncorrectException();
+        }
+    }
+
+    public static class PassIncorrectException extends Exception {
+        public PassIncorrectException() {
+            super("Incorrect password.");
+        }
+    }
+
     public void ajouterc(Consultation c) {
         this.ConsultationSet.add(c);
         this.rendezVousSet.add(c);
@@ -59,13 +73,13 @@ public class Orthophoniste implements Serializable {
     }
 
     public Orthophoniste(String nom, String prenom, String adresse, String numero,
-            String email) {
+            String email, String p) {
         this.nom = nom;
         this.prenom = prenom;
         this.adresse = adresse;
         this.numero = numero;
         this.email = email;
-        this.mtpasse = null;
+        this.mtpasse = p;
 
     }
 

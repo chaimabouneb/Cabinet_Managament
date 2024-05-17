@@ -24,7 +24,6 @@
                   <Label layoutX="121.0" layoutY="153.0" text="Orthophonist portal" />
                   <TextField fx:id="login_name" layoutX="74.0" layoutY="213.0" prefHeight="25.0" prefWidth="199.0" promptText="name" />
                   <PasswordField fx:id="login_password" layoutX="75.0" layoutY="258.0" prefHeight="25.0" prefWidth="199.0" promptText="password" />
-                  <TextField layoutX="75.0" layoutY="258.0" prefHeight="25.0" prefWidth="199.0" promptText="password" />
                   <CheckBox layoutX="76.0" layoutY="298.0" mnemonicParsing="false" text="show password" />
                   <Button fx:id="login_btn" layoutX="151.0" layoutY="355.0" mnemonicParsing="false" onAction="#loginAccount" text="log in" textFill="#00d7ff" />
                   <Label layoutX="62.0" layoutY="434.0" text="not registered ?" />
@@ -41,7 +40,6 @@
                   <Label layoutX="120.0" layoutY="122.0" text="Orthophonist portal" />
                   <TextField fx:id="register_lastname" layoutX="75.0" layoutY="187.0" prefHeight="25.0" prefWidth="199.0" promptText="last name" />
                   <PasswordField fx:id="register_password" layoutX="75.0" layoutY="322.0" prefHeight="25.0" prefWidth="199.0" promptText="password" />
-                  <TextField layoutX="75.0" layoutY="322.0" prefHeight="25.0" prefWidth="199.0" promptText="password" />
                   <Button fx:id="register_btn" layoutX="145.0" layoutY="387.0" mnemonicParsing="false" onAction="#registerAccount" text="register" textFill="#00d7ff" />
                   <Label layoutX="62.0" layoutY="434.0" text="already have an account?" />
                   <Hyperlink fx:id="login_switch" layoutX="227.0" layoutY="431.0" onAction="#switchForm" text="log in" />
