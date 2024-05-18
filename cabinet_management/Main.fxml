@@ -65,12 +65,12 @@
                               <AnchorPane layoutX="18.0" layoutY="230.0" prefHeight="302.0" prefWidth="892.0" style="-fx-background-color: beige;" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="app_form" prefHeight="555.0" prefWidth="897.0" visible="false">
+                        <AnchorPane fx:id="app_form" prefHeight="555.0" prefWidth="897.0">
                            <children>
                               <AnchorPane layoutX="-9.0" layoutY="282.0" prefHeight="235.0" prefWidth="892.0">
                                  <children>
                                     <Label layoutX="38.0" layoutY="37.0" text="type" />
-                                    <AnchorPane fx:id="consultation" layoutX="-6.0" layoutY="-250.0" prefHeight="464.0" prefWidth="941.0">
+                                    <AnchorPane fx:id="consultation" layoutX="-6.0" layoutY="-250.0" prefHeight="464.0" prefWidth="941.0" visible="false">
                                        <children>
                                           <Label layoutX="262.0" layoutY="411.0" text="Full Name" />
                                           <TextField fx:id="namecon" layoutX="254.0" layoutY="438.0" />
@@ -105,10 +105,10 @@
                                           </TableView>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane fx:id="atelier" layoutY="-283.0" prefHeight="521.0" prefWidth="944.0" visible="false">
+                                    <AnchorPane fx:id="atelier" layoutY="-283.0" prefHeight="521.0" prefWidth="944.0">
                                        <children>
                                           <Label layoutX="416.0" layoutY="252.0" text="thematique" />
-                                          <TextField layoutX="408.0" layoutY="279.0" />
+                                          <TextField fx:id="thema" layoutX="408.0" layoutY="279.0" />
                                           <TableView layoutX="317.0" layoutY="327.0" prefHeight="110.0" prefWidth="305.0">
                                             <columns>
                                               <TableColumn prefWidth="150.66668701171875" text="Full Names" />
@@ -165,7 +165,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="patient_page" prefHeight="531.0" prefWidth="922.0">
+                        <AnchorPane fx:id="patient_page" prefHeight="531.0" prefWidth="922.0" visible="false">
                            <children>
                               <AnchorPane prefHeight="531.0" prefWidth="625.0" style="-fx-background-color: grey;">
                                  <children>

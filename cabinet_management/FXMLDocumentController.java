@@ -82,7 +82,8 @@ public class FXMLDocumentController implements Initializable {
 
                 Data.name = name;
                 Data.orthophoniste = newOrthophoniste;
-
+                // Data.ConsultationSet = newOrthophoniste.getConsultations();
+                management.sauvegarderUtilisateurs(); // Save users after adding a new one
                 Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
                 Stage stage = new Stage();
                 stage.setTitle("Clinic Management System");
@@ -102,7 +103,7 @@ public class FXMLDocumentController implements Initializable {
                 alert.confirmationMsg(authOrth.getNom() + " Login Successful!");
                 Data.name = authOrth.getNom();
                 Data.orthophoniste = authOrth;
-
+                // Data.ConsultationSet = authOrth.getConsultations();
                 Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
                 Stage stage = new Stage();
                 stage.setTitle("Clinic Management System");
@@ -128,5 +129,10 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Any initialization if needed
+        // Load Consultations for the logged-in orthophoniste
+        Orthophoniste orthophoniste = Data.orthophoniste;
+        if (orthophoniste != null) {
+            Data.ConsultationSet = orthophoniste.getConsultations();
+        }
     }
 }

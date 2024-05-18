@@ -18,8 +18,8 @@ public class Orthophoniste implements Serializable {
     protected Set<Patient> patient;
 
     protected TreeSet<RendezVous> rendezVousSet = new TreeSet<>();
-    private TreeSet<Consultation> ConsultationSet = null;
-    private TreeSet<Suivi> SuiviSet = new TreeSet<>();
+    private TreeSet<Consultation> ConsultationSet;
+    private TreeSet<Suivi> SuiviSet;
     private TreeSet<Atelier> AtelierSet = new TreeSet<>();
 
     // Other methods...
@@ -30,6 +30,14 @@ public class Orthophoniste implements Serializable {
 
     public TreeSet<Consultation> getConsultations() {
         return ConsultationSet;
+    }
+
+    public TreeSet<Suivi> getSuivi() {
+        return SuiviSet;
+    }
+
+    public TreeSet<Atelier> getAtelier() {
+        return AtelierSet;
     }
 
     public boolean rendezVousExists(LocalDate date, LocalTime heure) {
@@ -61,11 +69,17 @@ public class Orthophoniste implements Serializable {
     }
 
     public void ajouters(Suivi c) {
+        if (SuiviSet == null) {
+            SuiviSet = new TreeSet<>();
+        }
         SuiviSet.add(c);
+        this.rendezVousSet.add(c);
     }
 
     public void ajoutera(Atelier c) {
         AtelierSet.add(c);
+        this.rendezVousSet.add(c);
+
     }
 
     public Orthophoniste(String nom) {
@@ -80,6 +94,9 @@ public class Orthophoniste implements Serializable {
         this.numero = numero;
         this.email = email;
         this.mtpasse = p;
+        this.ConsultationSet = new TreeSet<>();
+        this.SuiviSet = new TreeSet<>();
+        this.AtelierSet = new TreeSet<>();
 
     }
 

@@ -10,7 +10,7 @@ public class Management {
 
     public Management() {
         docs = new HashMap<>();
-        storageFilePath = "newfile.txt";
+        storageFilePath = "users_data.ser"; // Changed storage file name for clarity
         chargerUtilisateurs(); // Load users at initialization
     }
 
@@ -61,10 +61,12 @@ public class Management {
     public void chargerUtilisateurs() {
         try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(storageFilePath))) {
             Map<String, Orthophoniste> loadedUtilisateurs = (Map<String, Orthophoniste>) inputStream.readObject();
-            docs.putAll(loadedUtilisateurs); // Merge the loaded users with the existing ones
+            // Clear existing data and replace it with loaded data
+            docs.clear();
+            docs.putAll(loadedUtilisateurs);
             System.out.println("Chargement des utilisateurs effectué avec succès !");
         } catch (FileNotFoundException e) {
-            System.out.println("Le fichier de stockage des utilisateurs n'existe pas. Un nouveau fichier sera créé lors de la sauvegarde.");
+            System.out.println("Le fichier de stockage des utilisateurs n'existe pas.");
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("Erreur lors du chargement des utilisateurs : " + e.getMessage());
         }

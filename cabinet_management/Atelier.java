@@ -12,10 +12,10 @@ public class Atelier extends RendezVous {
     public Atelier() {
     };
 
-    public Atelier(String s, Map pf, LocalDate o, LocalTime t) {
+    public Atelier(String s, LocalDate o, LocalTime t) {
         super(o, t);
         thematique = s;
-        patientFolders = pf;
+        // patientFolders = pf;
 
     };
 }
