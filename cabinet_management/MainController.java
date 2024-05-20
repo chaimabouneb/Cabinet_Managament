@@ -337,7 +337,7 @@ public class MainController implements Initializable {
     public void switchFormTypeRendezv(ActionEvent event) {
 
         if (event.getSource() == type_app) {
-            if (type_app.getValue() == "Consultaion") {
+            if (type_app.getValue() == "Consultation") {
                 consultation.setVisible(true);
                 suivi.setVisible(false);
                 atelier.setVisible(false);

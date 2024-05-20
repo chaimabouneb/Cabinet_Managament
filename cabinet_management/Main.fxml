@@ -70,7 +70,7 @@
                               <AnchorPane layoutX="-9.0" layoutY="282.0" prefHeight="235.0" prefWidth="892.0">
                                  <children>
                                     <Label layoutX="38.0" layoutY="37.0" text="type" />
-                                    <AnchorPane fx:id="consultation" layoutX="-6.0" layoutY="-250.0" prefHeight="464.0" prefWidth="941.0" visible="false">
+                                    <AnchorPane fx:id="consultation" layoutX="-6.0" layoutY="-250.0" prefHeight="464.0" prefWidth="941.0">
                                        <children>
                                           <Label layoutX="262.0" layoutY="411.0" text="Full Name" />
                                           <TextField fx:id="namecon" layoutX="254.0" layoutY="438.0" />
@@ -105,7 +105,7 @@
                                           </TableView>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane fx:id="atelier" layoutY="-283.0" prefHeight="521.0" prefWidth="944.0">
+                                    <AnchorPane fx:id="atelier" layoutY="-283.0" prefHeight="521.0" prefWidth="944.0" visible="false">
                                        <children>
                                           <Label layoutX="416.0" layoutY="252.0" text="thematique" />
                                           <TextField fx:id="thema" layoutX="408.0" layoutY="279.0" />
