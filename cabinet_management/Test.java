@@ -12,6 +12,10 @@ public abstract class Test {
         this.score = s;
     }
 
+    public Test(String nom) {
+        this.nom = nom;
+    }
+
     public void Test(String nom, double score, String conclusion) {
 
         this.nom = nom;
@@ -19,6 +23,14 @@ public abstract class Test {
         this.conclusion = conclusion;
     };
 
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+    
     public abstract void Calc_Score();
 
     public void ajouterConclusion(String s) {
