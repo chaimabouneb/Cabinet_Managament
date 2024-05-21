@@ -9,53 +9,39 @@ public class Management {
     private String storageFilePath;
 
     public Management() {
-        docs = new HashMap<String, Orthophoniste>();
-        storageFilePath = "newfile.txt";
+        docs = new HashMap<>();
+        storageFilePath = "users_data.ser"; // Changed storage file name for clarity
+        chargerUtilisateurs(); // Load users at initialization
     }
 
-    public Orthophoniste getUtilisateur(Orthophoniste user) {
-        return docs.get(user.getNom());
-
+    public Orthophoniste getUtilisateur(String nom) {
+        return docs.get(nom);
     }
 
-    public boolean authentifier(String pseudo) {
-        chargerUtilisateurs();
+    public static class PassIncorrectException extends Exception {
+        public PassIncorrectException(String message) {
+            super(message);
+        }
+    }
+
+    public Orthophoniste authentifier(String pseudo, String pass)
+            throws PassIncorrectException, Orthophoniste.PassIncorrectException {
         if (docs.containsKey(pseudo)) {
-            System.out.println("il existe");
-            return true;
+            Orthophoniste o = docs.get(pseudo);
+            if (o.authentifierPasse(pass)) {
+                return o;
+            } else {
+                throw new PassIncorrectException("Password incorrect.");
+            }
         } else {
-            System.out.println("il n'existe pas !");
-            return false;
+            throw new PassIncorrectException("User not found.");
         }
-    }
-
-    public Orthophoniste getUser(String pseudo) {
-        chargerUtilisateurs();
-        if (authentifier(pseudo)) {
-            System.out.println("il existe");
-            return docs.get(pseudo);
-        } else {
-            System.out.println("il n'existe pas !");
-            return null;
-        }
-    }
-
-    public void setUtilisateur(Orthophoniste user) {
-        docs.put(user.getNom(), user);
-
     }
 
     public void ajouterUtilisateur(Orthophoniste user) {
-        System.out.println("A");
-        chargerUtilisateurs(); // Load existing users
-        System.out.println("B");
-
         if (!docs.containsKey(user.getNom())) {
-            System.out.println("C");
-
             docs.put(user.getNom(), user);
             sauvegarderUtilisateurs(); // Save the updated users, including the new user
-
             System.out.println("Orthophoniste ajouté avec succès !");
         } else {
             System.out.println("Pseudo déjà utilisé. Veuillez choisir un autre pseudo.");
@@ -75,14 +61,14 @@ public class Management {
     public void chargerUtilisateurs() {
         try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(storageFilePath))) {
             Map<String, Orthophoniste> loadedUtilisateurs = (Map<String, Orthophoniste>) inputStream.readObject();
-            docs.putAll(loadedUtilisateurs); // Merge the loaded users with the existing ones
+            // Clear existing data and replace it with loaded data
+            docs.clear();
+            docs.putAll(loadedUtilisateurs);
             System.out.println("Chargement des utilisateurs effectué avec succès !");
         } catch (FileNotFoundException e) {
-            System.out.println(
-                    "Le fichier de stockage des utilisateurs n'existe pas. Un nouveau fichier sera créé lors de la sauvegarde.");
+            System.out.println("Le fichier de stockage des utilisateurs n'existe pas.");
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("Erreur lors du chargement des utilisateurs : " + e.getMessage());
         }
     }
-
 }

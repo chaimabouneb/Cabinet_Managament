@@ -34,6 +34,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 public class MainController implements Initializable {
+    private Management management = new Management();
+
     @FXML
     private Button addapp;
 
@@ -108,7 +110,8 @@ public class MainController implements Initializable {
 
     @FXML
     private TextField min;
-
+    @FXML
+    private TextField thema;
     @FXML
     private TextField namecon;
 
@@ -156,6 +159,8 @@ public class MainController implements Initializable {
 
     @FXML
     private TableView<RendezVous> tableAtelier;
+    @FXML
+    private TableView<Patient> patientstab;
 
     @FXML
     private TableView<RendezVous> tableConsultaion;
@@ -204,110 +209,114 @@ public class MainController implements Initializable {
     public void AddAppBtn(ActionEvent e) {
         if (e.getSource() == addapp) {
             AlertMessage a = new AlertMessage();
-            System.out.println("heehe");
-            TextField hourTextField = hour;
-            TextField minuteTextField = min;
-            String hourText = hourTextField.getText();
-            String minuteText = minuteTextField.getText();
 
-            int houre = Integer.parseInt(hourText);
-            int minute = Integer.parseInt(minuteText);
+            try {
+                int houre = Integer.parseInt(hour.getText());
+                int minute = Integer.parseInt(min.getText());
 
-            LocalTime localTime = LocalTime.of(houre, minute);
-            System.out.println(localTime);
-            System.out.println(type_app.getValue());
-            TreeSet<Consultation> s = Data.orthophoniste.getConsultations();
-            for (Consultation r : s) {
-                System.out.println(r.getDate());
-            }
+                LocalTime localTime = LocalTime.of(houre, minute);
+                Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
 
-            if (Data.orthophoniste.rendezVousExists(date.getValue(), localTime)) {
-                a.errorMessg("already taken");
-
-            } else {
-                if (type_app.getValue() == "Consultation") {
-                    Consultation c = new Consultation(Integer.parseInt(ageconsultation.getText()), namecon.getText(),
-                            date.getValue(), localTime);
-                    Data.orthophoniste.ajouterc(c);
-
-                    System.out.println("c1");
-
-                } else if (type_app.getValue() == "Suivi") {
-
-                    Suivi ss = new Suivi(enlign.isSelected(), date.getValue(), localTime);
-                    System.out.println("suivi");
-
-                } else if (type_app.getValue() == "atelier") {
-                    System.out.println("ate");
-
+                if (loggedInOrthophonist.rendezVousExists(date.getValue(), localTime)) {
+                    a.errorMessg("already taken");
+                } else {
+                    if (type_app.getValue().equals("Consultation")) {
+                        Consultation c = new Consultation(
+                                Integer.parseInt(ageconsultation.getText()),
+                                (String) gender_Consultation.getValue(),
+                                namecon.getText(),
+                                date.getValue(), localTime);
+                        loggedInOrthophonist.ajouterc(c);
+                    } else if (type_app.getValue().equals("Suivi")) {
+                        Suivi ss = new Suivi(
+                                enlign.isSelected(),
+                                date.getValue(),
+                                localTime,
+                                namesuivi.getText() // Assuming namesuivi is the patient's name field
+                        );
+                        loggedInOrthophonist.ajouters(ss);
+                    } else if (type_app.getValue().equals("atelier")) {
+                        Atelier atelier = new Atelier(
+                                thema.getText(),
+                                date.getValue(),
+                                localTime);
+                        loggedInOrthophonist.ajoutera(atelier);
+                    }
+                    showAppData();
+                    a.succesMessage("success");
+                    management.sauvegarderUtilisateurs();
                 }
+            } catch (NumberFormatException ex) {
+                a.errorMessg("Invalid time format");
             }
-            showAppData();
-            a.succesMessage("success");
         }
+    }
+
+    public ObservableList<Patient> PateintsgetData() {
+        ObservableList<Patient> listData = FXCollections.observableArrayList();
+
+        for (Patient r : Data.orthophoniste.patient) {
+            listData.add(r);
+        }
+        return listData;
+    }
+
+    public void showPatientsData() {
+
+        ObservableList<Patient> appoinmentListData = PateintsgetData();
+
+        patientstab.setItems(appoinmentListData);
     }
 
     public ObservableList<RendezVous> appointmentGetData() {
         ObservableList<RendezVous> listData = FXCollections.observableArrayList();
-        RendezVous appData = null;
+        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
 
-        for (RendezVous r : Data.orthophoniste.rendezVousSet) {
-
-            if (type_app.getValue() == "Consultation" && r.getClass().getName() == "Consultation") {
-                appData = new Consultation(((Consultation) r).getage(), ((Consultation) r).getnom(), r.getDate(),
-                        r.getHeure());
-            } else if (type_app.getValue() == "Suivi" && r.getClass().getName() == "Suivi") {
-                appData = new Suivi();
-
-            } else if (type_app.getValue() == "atelier" && r.getClass().getName() == "Atelier") {
-                appData = new Atelier();
+        if (loggedInOrthophonist != null) {
+            if ("Consultation".equals(type_app.getValue())) {
+                TreeSet<Consultation> consultations = loggedInOrthophonist.getConsultations();
+                if (consultations != null && !consultations.isEmpty()) {
+                    listData.addAll(consultations);
+                }
+            } else if ("Suivi".equals(type_app.getValue())) {
+                TreeSet<Suivi> suivi = loggedInOrthophonist.getSuivi();
+                if (suivi != null && !suivi.isEmpty()) {
+                    listData.addAll(suivi);
+                }
+            } else if ("atelier".equals(type_app.getValue())) {
+                TreeSet<Atelier> ateliers = loggedInOrthophonist.getAtelier();
+                if (ateliers != null && !ateliers.isEmpty()) {
+                    listData.addAll(ateliers);
+                }
             }
-
-            // STORE ALL DATA
-            listData.add(appData);
         }
         return listData;
-
     }
 
     public void showAppData() {
+        ObservableList<RendezVous> appointmentListData = appointmentGetData();
+        tableConsultaion.setItems(appointmentListData);
+        tableAtelier.setItems(appointmentListData);
+        tablesuivi.setItems(appointmentListData);
 
-        ObservableList<RendezVous> appoinmentListData = appointmentGetData();
-        if (type_app.getValue() == "Consultation") {
-            tableConsultaion.setItems(appoinmentListData);
+        // Set up the nameSuivitab and enligneSuivitab columns for Suivi appointments
+        namesuivitab.setCellValueFactory(new PropertyValueFactory<>("nom"));
+        eopsuivitab.setCellValueFactory(new PropertyValueFactory<>("e"));
 
-        } else if (type_app.getValue() == "Suivi") {
-            tablesuivi.setItems(appoinmentListData);
+        // Set up other columns similarly, assuming these methods exist in RendezVous
+        namecontab.setCellValueFactory(new PropertyValueFactory<>("nom"));
+        agecontab.setCellValueFactory(new PropertyValueFactory<>("age"));
+        datecontab.setCellValueFactory(new PropertyValueFactory<>("date"));
+        duationcontab.setCellValueFactory(new PropertyValueFactory<>("duree"));
+        gendercontab.setCellValueFactory(new PropertyValueFactory<>("gender"));
 
-        } else if (type_app.getValue() == "atelier") {
-            tableAtelier.setItems(appoinmentListData);
-
-        }
-
-        // appointments_col_name.setCellValueFactory(new
-        // PropertyValueFactory<>("name"));
-        /*
-         * .setCellValueFactory(new PropertyValueFactory<>("gender"));
-         * appointments_col_contactNumber.setCellValueFactory(new
-         * PropertyValueFactory<>("mobileNumber"));
-         * appointments_col_description.setCellValueFactory(new
-         * PropertyValueFactory<>("description"));
-         * appointments_col_date.setCellValueFactory(new
-         * PropertyValueFactory<>("date"));
-         * appointments_col_dateModify.setCellValueFactory(new
-         * PropertyValueFactory<>("dateModify"));
-         * appointments_col_dateDelete.setCellValueFactory(new
-         * PropertyValueFactory<>("dateDelete"));
-         * appointments_col_status.setCellValueFactory(new
-         * PropertyValueFactory<>("status"));
-         * 
-         * appointments_tableView.setItems(appoinmentListData);
-         */
     }
 
     public void switchForm(ActionEvent event) {
 
         if (event.getSource() == dashboard_btn) {
+            patient_page.setVisible(false);
+
             dash_form.setVisible(true);
             patients_form.setVisible(false);
             app_form.setVisible(false);
@@ -315,9 +324,13 @@ public class MainController implements Initializable {
             if (event.getSource() == app_btn) {
                 dash_form.setVisible(false);
                 patients_form.setVisible(false);
+                patient_page.setVisible(false);
                 app_form.setVisible(true);
+
             } else {
                 if (event.getSource() == patients_btn) {
+                    patient_page.setVisible(false);
+
                     dash_form.setVisible(false);
                     patients_form.setVisible(true);
                     app_form.setVisible(false);
@@ -329,7 +342,7 @@ public class MainController implements Initializable {
     public void switchFormTypeRendezv(ActionEvent event) {
 
         if (event.getSource() == type_app) {
-            if (type_app.getValue() == "Consultaion") {
+            if (type_app.getValue() == "Consultation") {
                 consultation.setVisible(true);
                 suivi.setVisible(false);
                 atelier.setVisible(false);
@@ -356,18 +369,17 @@ public class MainController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         // kkk
         displayName();
+
         appointmentGenderList();
         appointmentStatusList();
+
         LocalDate currentDate = LocalDate.now();
         LocalTime currentTime = LocalTime.now();
-        System.out.println(Data.orthophoniste.getNom());
 
-        for (Consultation x : Data.orthophoniste.getConsultations()) {
-            System.out.println(x.getnom());
-        }
-
+        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+        // loggedInOrthophonist.ajouterc(c);
+        // management.sauvegarderUtilisateurs();
         // showAppData();
     }
 
-  
 }

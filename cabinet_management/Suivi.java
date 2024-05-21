@@ -8,13 +8,15 @@ public class Suivi extends RendezVous {
     private double score;
     private boolean e;
     private List<Objectif> objectifs;
+    private String nom;
 
     public Suivi() {
     }
 
-    public Suivi(boolean e, LocalDate date, LocalTime heure) {
+    public Suivi(boolean e, LocalDate date, LocalTime heure, String n) {
         super(date, heure);
         this.e = e;
+        this.nom = n;
 
     }
 
@@ -32,6 +34,10 @@ public class Suivi extends RendezVous {
 
     public void setE(boolean e) {
         this.e = e;
+    }
+
+    public String getNom() {
+        return nom;
     }
 
     public List<Objectif> getObjectifs() {

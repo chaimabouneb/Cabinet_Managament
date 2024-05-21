@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.TreeSet;
 
 public class Orthophoniste implements Serializable {
@@ -14,10 +15,11 @@ public class Orthophoniste implements Serializable {
     private String mtpasse;
     private String email;
     private HashMap<Double, Dossier> patients = null;
+    protected Set<Patient> patient;
 
     protected TreeSet<RendezVous> rendezVousSet = new TreeSet<>();
-    private TreeSet<Consultation> ConsultationSet = new TreeSet<Consultation>();
-    private TreeSet<Suivi> SuiviSet = new TreeSet<>();
+    private TreeSet<Consultation> ConsultationSet;
+    private TreeSet<Suivi> SuiviSet;
     private TreeSet<Atelier> AtelierSet = new TreeSet<>();
 
     // Other methods...
@@ -30,6 +32,14 @@ public class Orthophoniste implements Serializable {
         return ConsultationSet;
     }
 
+    public TreeSet<Suivi> getSuivi() {
+        return SuiviSet;
+    }
+
+    public TreeSet<Atelier> getAtelier() {
+        return AtelierSet;
+    }
+
     public boolean rendezVousExists(LocalDate date, LocalTime heure) {
         for (RendezVous rendezVous : rendezVousSet) {
             if (rendezVous.getDate().equals(date) && rendezVous.getHeure().equals(heure)) {
@@ -39,17 +49,37 @@ public class Orthophoniste implements Serializable {
         return false; // RendezVous with the given date and hour does not exist
     }
 
+    public boolean authentifierPasse(String passe) throws PassIncorrectException {
+        if (this.mtpasse.equals(passe)) {
+            return true;
+        } else {
+            throw new PassIncorrectException();
+        }
+    }
+
+    public static class PassIncorrectException extends Exception {
+        public PassIncorrectException() {
+            super("Incorrect password.");
+        }
+    }
+
     public void ajouterc(Consultation c) {
-        ConsultationSet.add(c);
-        rendezVousSet.add(c);
+        this.ConsultationSet.add(c);
+        this.rendezVousSet.add(c);
     }
 
     public void ajouters(Suivi c) {
+        if (SuiviSet == null) {
+            SuiviSet = new TreeSet<>();
+        }
         SuiviSet.add(c);
+        this.rendezVousSet.add(c);
     }
 
     public void ajoutera(Atelier c) {
         AtelierSet.add(c);
+        this.rendezVousSet.add(c);
+
     }
 
     public Orthophoniste(String nom) {
@@ -57,13 +87,16 @@ public class Orthophoniste implements Serializable {
     }
 
     public Orthophoniste(String nom, String prenom, String adresse, String numero,
-            String email) {
+            String email, String p) {
         this.nom = nom;
         this.prenom = prenom;
         this.adresse = adresse;
         this.numero = numero;
         this.email = email;
-        this.mtpasse = null;
+        this.mtpasse = p;
+        this.ConsultationSet = new TreeSet<>();
+        this.SuiviSet = new TreeSet<>();
+        this.AtelierSet = new TreeSet<>();
 
     }
 

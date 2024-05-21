@@ -17,10 +17,10 @@ public class Consultation extends RendezVous implements Serializable {
         this.nom = name;
     }
 
-    public Consultation(int d, String n, LocalDate date, LocalTime t) {
-        super(date, t);
+    public Consultation(int d, String g, String n, LocalDate date, LocalTime t) {
+        super(date, t, g);
         nom = n;
-
+        this.age = d;
         if (d >= 19) {
             duree = LocalTime.of(1, 30);
         } else {

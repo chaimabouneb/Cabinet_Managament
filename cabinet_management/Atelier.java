@@ -1,5 +1,6 @@
 package cabinet_management;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 import java.util.Map;
@@ -11,10 +12,10 @@ public class Atelier extends RendezVous {
     public Atelier() {
     };
 
-    public Atelier(String s, Map pf, String o, LocalTime t) {
+    public Atelier(String s, LocalDate o, LocalTime t) {
         super(o, t);
         thematique = s;
-        patientFolders = pf;
+        // patientFolders = pf;
 
     };
 }
