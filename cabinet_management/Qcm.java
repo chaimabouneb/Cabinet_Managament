@@ -11,6 +11,10 @@ public class Qcm extends Question implements Reponse {
         this.correctreponse = cor;
     }
 
+    public void setScore(double score) {
+        this.score = score;
+    }
+    
     @Override
     public void setuserselction(List<Integer> reponses) {
         // Validate user answer indices
@@ -23,31 +27,7 @@ public class Qcm extends Question implements Reponse {
 
     }
 
-    @Override
-
-    public void setScore() {
-        int totalCorrectChoices = correctreponse.size();
-        int userCorrectChoices = 0;
-
-        // Count the number of correct choices selected by the user
-        for (int userChoice : reponses) {
-            if (correctreponse.contains(userChoice)) {
-                userCorrectChoices++;
-            }
-        }
-
-        // Calculate the score
-        double score;
-        if (totalCorrectChoices == 0) {
-            // No correct choices, so score is 0
-            score = 0;
-        } else {
-            score = ((double) userCorrectChoices / totalCorrectChoices) * super.note;
-        }
-
-        // Set the score
-        super.score = score;
-    }
+    
 
     public void setCorrectAnswerIndices(List<Integer> correctAnswerIndices) {
         // Validate correct answer indices

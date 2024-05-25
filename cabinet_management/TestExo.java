@@ -5,8 +5,17 @@ import java.util.List;;
 public class TestExo extends Test {
     private List<Exo> exos;
 
-    public TestExo(List<Exo> EXOS) {
+    public TestExo(String nom,List<Exo> EXOS) {
+        super(nom);
         this.exos = EXOS;
+    }
+
+    public List<Exo> getExercices() {
+        return exos;
+    }
+
+    public void setExercices(List<Exo> exercices) {
+        this.exos = exercices;
     }
 
     public void ajouterExo(Exo e) {

@@ -22,10 +22,4 @@ public class Libre extends Question {
         this.scoree = s;
     }
 
-    @Override
-    public void setScore() {
-        // Calculate the score
-
-        super.score = this.scoree;
-    }
 }

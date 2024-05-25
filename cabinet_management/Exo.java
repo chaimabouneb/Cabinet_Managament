@@ -17,6 +17,27 @@ public class Exo {
 
     }
 
+    public Exo(String consigne, String materiel) {
+        this.consigne = consigne;
+        this.material = materiel;
+    }
+
+    public String getConsigne() {
+        return consigne;
+    }
+
+    public void setConsigne(String consigne) {
+        this.consigne = consigne;
+    }
+
+    public String getMateriel() {
+        return material;
+    }
+
+    public void setMateriel(String materiel) {
+        this.material = materiel;
+    }
+
     public void setScore(double s) {
         this.score = s;
     }

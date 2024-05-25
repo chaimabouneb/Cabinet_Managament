@@ -1,8 +1,9 @@
 package cabinet_management;
 
 import java.time.LocalDate;
+import java.io.Serializable;
 
-public class Adulte extends Patient {
+public class Adulte extends Patient implements Serializable {
     private String diplome;
     private String profession;
     private String num;
@@ -11,6 +12,14 @@ public class Adulte extends Patient {
     public Adulte(String n) {
         super(n);
     }
+
+    public Adulte(Patient patient, String d, String pr, String n) {
+        super(patient.getnom(), patient.getprenom(), patient.getdate(), patient.getadress(), patient.getlieu());
+        this.diplome = d;
+        this.profession = pr;
+        this.num = n;
+
+    };
 
     public Adulte(String n, String prenom, String adresse, LocalDate datenes, String lieunes, String diplome,
             String profession, String num) {

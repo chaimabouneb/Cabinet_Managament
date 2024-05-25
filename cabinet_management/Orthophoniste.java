@@ -4,7 +4,11 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
+
 import java.util.HashSet;
+
+import java.util.Objects;
+
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -15,8 +19,14 @@ public class Orthophoniste implements Serializable {
     private String numero;
     private String mtpasse;
     private String email;
-    private HashMap<String, Dossier> patients = new HashMap<>();
-    protected Set<Patient> patient = new HashSet<>();
+
+    private HashMap<Double, Dossier> patients = new HashMap<>();
+    // protected Set<Patient> patient = new HashSet<>();
+
+    // protected HashMap<Double, Dossier> patients =new HashMap<>() ;
+    Double lastKey = 0.0;
+    protected Set<Patient> patient = new TreeSet<>();
+
     protected TreeSet<RendezVous> rendezVousSet = new TreeSet<>();
     private TreeSet<Consultation> ConsultationSet = new TreeSet<>();
     private TreeSet<Suivi> SuiviSet = new TreeSet<>();
@@ -62,11 +72,11 @@ public class Orthophoniste implements Serializable {
         this.nom = nom;
     }
 
-    public HashMap<String, Dossier> getPatients() {
+    public HashMap<Double, Dossier> getPatients() {
         return patients;
     }
 
-    public void setPatients(HashMap<String, Dossier> patients) {
+    public void setPatients(HashMap<Double, Dossier> patients) {
         this.patients = patients;
     }
 
@@ -135,15 +145,54 @@ public class Orthophoniste implements Serializable {
         this.rendezVousSet.add(c);
     }
 
-    public void addPatient(Dossier d) {
-        patients.put(d.getPatient().getNom(), d);
-    }
+    /*
+     * public void addPatient(Dossier d) {
+     * 
+     * patients.put(d.getPatient().getNom(), d);
+     * }
+     */
 
     public boolean isPatient(Double d) {
         return patients.containsKey(d);
     }
 
-    public Dossier getPatient(Double d) {
+    public Dossier getPatient(String d) {
         return patients.get(d);
     }
+
+    public void addPatient(Dossier d) {
+        Double key = lastKey + 1;
+        d.setnumdossier(key);
+        patients.put(key, d);
+        patient.add(d.getpatient());
+        lastKey = key;
+        System.out.println("puuuted");
+    }
+
+    public boolean isPatient(Patient p) {// Check if a patient exists
+        for (Patient patientobj : patient) {
+            if (patientobj.getnom().equals(p.getnom()) && patientobj.getprenom().equals(p.getprenom())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean exists(Double d) {
+        if (patients.containsKey(d)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public Dossier getPatient(Double d) {
+        if (exists(d)) {
+            return patients.get(d);
+        } else {
+            System.out.println("not patient");
+            return null;
+        }
+    }
+
 }

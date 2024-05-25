@@ -1,6 +1,6 @@
 package cabinet_management;
 
-public enum ClasseEtude {
+public enum ClasseEtude implements serialisable{
 
     PREMIERE_AP,
     DEUXIEME_AP,

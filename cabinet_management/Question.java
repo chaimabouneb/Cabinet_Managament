@@ -25,6 +25,10 @@ public abstract class Question {
 
     }
 
+    public Question(String enonce) {
+        this.enonce = enonce;
+    }
+
     public Question() {
     }
 
@@ -36,10 +40,19 @@ public abstract class Question {
         return options;
     }
 
-    public abstract void setScore();
+    public void setEnonce(String enonce) {
+        this.enonce = enonce;
+    }
 
+    
     public double getScore() {
         return score;
     }
+
+    public void setScore(double score) {
+        this.score = score;
+
+    }   
+     //public abstract String getReponse();
 
 }
