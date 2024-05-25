@@ -1,10 +1,12 @@
 package cabinet_management;
 
+import java.io.Serializable;
+
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 
-public class FicheSuivi {
+public class FicheSuivi implements Serializable {
     private List<Suivi> suivis = null;
     private boolean atteint;
 

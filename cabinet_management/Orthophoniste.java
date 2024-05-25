@@ -4,28 +4,91 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
+
+import java.util.HashSet;
+
 import java.util.Objects;
+
 import java.util.Set;
 import java.util.TreeSet;
 
-public class Orthophoniste implements Serializable  {
+public class Orthophoniste implements Serializable {
     private String nom;
     private String prenom;
     private String adresse;
     private String numero;
     private String mtpasse;
     private String email;
-    protected HashMap<Double, Dossier> patients =new HashMap<>() ;
-    Double lastKey=0.0;
-    protected Set<Patient> patient= new TreeSet<>();
+
+    private HashMap<Double, Dossier> patients = new HashMap<>();
+    // protected Set<Patient> patient = new HashSet<>();
+
+    // protected HashMap<Double, Dossier> patients =new HashMap<>() ;
+    Double lastKey = 0.0;
+    protected Set<Patient> patient = new TreeSet<>();
 
     protected TreeSet<RendezVous> rendezVousSet = new TreeSet<>();
-    private TreeSet<Consultation> ConsultationSet;
-    private TreeSet<Suivi> SuiviSet;
+    private TreeSet<Consultation> ConsultationSet = new TreeSet<>();
+    private TreeSet<Suivi> SuiviSet = new TreeSet<>();
     private TreeSet<Atelier> AtelierSet = new TreeSet<>();
 
-    // Other methods...
+    // Constructor for Orthophoniste with only name
+    public Orthophoniste(String nom) {
+        this.nom = nom;
+        // Initialize collections
+        this.ConsultationSet = new TreeSet<>();
+        this.SuiviSet = new TreeSet<>();
+        this.AtelierSet = new TreeSet<>();
+        this.patient = new HashSet<>();
+        this.patients = new HashMap<>();
+    }
 
+    public void addP(Patient p) {
+        this.patient.add(p);
+    }
+
+    // Constructor for Orthophoniste with all fields
+    public Orthophoniste(String nom, String prenom, String adresse, String numero,
+            String email, String p) {
+        this.nom = nom;
+        this.prenom = prenom;
+        this.adresse = adresse;
+        this.numero = numero;
+        this.email = email;
+        this.mtpasse = p;
+        this.ConsultationSet = new TreeSet<>();
+        this.SuiviSet = new TreeSet<>();
+        this.AtelierSet = new TreeSet<>();
+        this.patient = new HashSet<>();
+        this.patients = new HashMap<>();
+    }
+
+    // Getters and Setters for fields
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public HashMap<Double, Dossier> getPatients() {
+        return patients;
+    }
+
+    public void setPatients(HashMap<Double, Dossier> patients) {
+        this.patients = patients;
+    }
+
+    public Set<Patient> getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Set<Patient> patient) {
+        this.patient = patient;
+    }
+
+    // Methods for managing appointments and patients
     public TreeSet<RendezVous> getRendezVousSet() {
         return rendezVousSet;
     }
@@ -42,13 +105,12 @@ public class Orthophoniste implements Serializable  {
         return AtelierSet;
     }
 
+    public Dossier chercheDossier(String nom) {
+        return patients.get(nom);
+    }
+
     public boolean rendezVousExists(LocalDate date, LocalTime heure) {
-        for (RendezVous rendezVous : rendezVousSet) {
-            if (rendezVous.getDate().equals(date) && rendezVous.getHeure().equals(heure)) {
-                return true; // RendezVous with the given date and hour exists
-            }
-        }
-        return false; // RendezVous with the given date and hour does not exist
+        return rendezVousSet.stream().anyMatch(rv -> rv.getDate().equals(date) && rv.getHeure().equals(heure));
     }
 
     public boolean authentifierPasse(String passe) throws PassIncorrectException {
@@ -81,41 +143,21 @@ public class Orthophoniste implements Serializable  {
     public void ajoutera(Atelier c) {
         AtelierSet.add(c);
         this.rendezVousSet.add(c);
-
     }
 
-    public Orthophoniste(String nom) {
-        this.nom = nom;
+    /*
+     * public void addPatient(Dossier d) {
+     * 
+     * patients.put(d.getPatient().getNom(), d);
+     * }
+     */
+
+    public boolean isPatient(Double d) {
+        return patients.containsKey(d);
     }
 
-    public Orthophoniste(String nom, String prenom, String adresse, String numero,
-            String email, String p) {
-        this.nom = nom;
-        this.prenom = prenom;
-        this.adresse = adresse;
-        this.numero = numero;
-        this.email = email;
-        this.mtpasse = p;
-        this.ConsultationSet = new TreeSet<>();
-        this.SuiviSet = new TreeSet<>();
-        this.AtelierSet = new TreeSet<>();
-
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public String getNom() {
-        return nom;
-    }
-
-    public HashMap getPatients() {
-        return patients;
-    }
-
-    public void setPatients(HashMap p) {
-        patients = p;
+    public Dossier getPatient(String d) {
+        return patients.get(d);
     }
 
     public void addPatient(Dossier d) {
@@ -123,26 +165,23 @@ public class Orthophoniste implements Serializable  {
         d.setnumdossier(key);
         patients.put(key, d);
         patient.add(d.getpatient());
-        lastKey=key;
+        lastKey = key;
         System.out.println("puuuted");
     }
 
     public boolean isPatient(Patient p) {// Check if a patient exists
         for (Patient patientobj : patient) {
             if (patientobj.getnom().equals(p.getnom()) && patientobj.getprenom().equals(p.getprenom())) {
-                return true; 
+                return true;
             }
         }
-        return false; 
+        return false;
     }
 
-    
-    
-    public boolean exists(Double d){
-        if (patients.containsKey(d)){
+    public boolean exists(Double d) {
+        if (patients.containsKey(d)) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -155,6 +194,5 @@ public class Orthophoniste implements Serializable  {
             return null;
         }
     }
-
 
 }

@@ -3,8 +3,13 @@ package cabinet_management;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Bo {
+import java.io.Serializable;
+
+public class Bo implements Serializable {
+    private List<Epreuve> epreuvescliniques;
+
     private List<Epreuve> epreuvesCliniques;
+
     private List<Trouble> Diagnostic;
     private String projettherapeutic;
 
@@ -32,8 +37,8 @@ public class Bo {
         }
     }
 
-     // Getters and setters
-     public List<Epreuve> getEpreuvesCliniques() {
+    // Getters and setters
+    public List<Epreuve> getEpreuvesCliniques() {
         return epreuvesCliniques;
     }
 
@@ -57,4 +62,3 @@ public class Bo {
         this.projettherapeutic = projetTherapeutique;
     }
 }
-

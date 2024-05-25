@@ -7,7 +7,6 @@ import java.util.TreeMap;
 
 import cabinet_management.Cat_Quest;
 
-
 public class Anam {
 
     private Map<Cat_Quest, List<QuestionA>> questions = new HashMap<>();

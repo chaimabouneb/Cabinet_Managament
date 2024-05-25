@@ -75,7 +75,7 @@
                               <AnchorPane layoutX="-9.0" layoutY="282.0" prefHeight="235.0" prefWidth="892.0">
                                  <children>
                                     <Label layoutX="38.0" layoutY="37.0" text="type" />
-                                    <AnchorPane fx:id="consultation" layoutX="-6.0" layoutY="-250.0" prefHeight="464.0" prefWidth="941.0">
+                                    <AnchorPane fx:id="consultation" layoutX="-6.0" layoutY="-250.0" prefHeight="464.0" prefWidth="941.0" visible="false">
                                        <children>
                                           <Label layoutX="262.0" layoutY="411.0" text="Full Name" />
                                           <TextField fx:id="namecon" layoutX="254.0" layoutY="438.0" />
@@ -94,7 +94,7 @@
                                           </TableView>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane fx:id="suivi" layoutY="-253.0" prefHeight="481.0" prefWidth="944.0" visible="false">
+                                    <AnchorPane fx:id="suivi" layoutY="-253.0" prefHeight="481.0" prefWidth="944.0">
                                        <children>
                                           <Label layoutX="359.0" layoutY="381.0" text="Full Name" />
                                           <TextField fx:id="namesuivi" layoutX="351.0" layoutY="408.0" />
@@ -192,6 +192,11 @@
                                         <TableColumn fx:id="patient_fname" prefWidth="209.33328247070312" text="first Name" />
                                         <TableColumn fx:id="patient_lname" prefWidth="209.33328247070312" text="last Name" />
                                         <TableColumn fx:id="patient_id" prefWidth="236.00006103515625" text="File ID" />
+
+                                          <TableColumn fx:id="patient_gender" prefWidth="133.99996948242188" text="Gender" />
+                                          <TableColumn fx:id="pateint_contact" prefWidth="134.6666259765625" text="Contact Number" />
+
+
                                       </columns>
                                     </TableView>
                                  </children>
