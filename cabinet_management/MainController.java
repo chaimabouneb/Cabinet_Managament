@@ -34,6 +34,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+
+
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -253,6 +256,16 @@ public class MainController implements Initializable {
 
     @FXML
     private Label agepatient;
+
+    @FXML
+    private AnchorPane bo_init;
+
+    @FXML
+    private Button addBo;
+
+    @FXML
+    private BorderPane maine;
+
 
 
     private ObservableList<Dossier> dossierList;
@@ -587,6 +600,11 @@ public class MainController implements Initializable {
         management.sauvegarderUtilisateurs();
         showPatientData();
 
+    }
+
+    public void Add_bo(ActionEvent event ){
+        bo_init.setVisible(true);
+        maine.setVisible(false);
     }
    
 

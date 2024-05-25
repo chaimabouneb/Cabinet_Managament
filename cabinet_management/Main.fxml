@@ -19,7 +19,12 @@
    <children>
       <AnchorPane prefHeight="200.0" prefWidth="200.0">
          <children>
-            <BorderPane layoutX="93.0" layoutY="85.0" prefHeight="600.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane fx:id="bo_init" prefHeight="600.0" prefWidth="1100.0">
+               <children>
+                  <Label layoutX="100.0" layoutY="100.0" text="LES BOs" />
+               </children>
+            </AnchorPane>
+            <BorderPane fx:id="maine" layoutX="93.0" layoutY="85.0" prefHeight="600.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <top>
                   <AnchorPane prefHeight="61.0" prefWidth="1100.0" BorderPane.alignment="CENTER">
                      <children>
@@ -273,7 +278,7 @@
                                     </TableView>
                                     <TextField layoutX="121.0" layoutY="1.0" prefHeight="25.0" prefWidth="89.0" promptText="search " />
                                     <Button layoutX="225.0" layoutY="1.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="30.0" text="ok" />
-                                    <Button layoutX="29.0" layoutY="13.0" mnemonicParsing="false" text="add" />
+                                    <Button fx:id="addBo" layoutX="29.0" layoutY="13.0" mnemonicParsing="false" onAction="#Add_bo" text="add" />
                                  </children>
                               </AnchorPane>
                            </children>
