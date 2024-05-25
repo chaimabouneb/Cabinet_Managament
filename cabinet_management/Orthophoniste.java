@@ -4,18 +4,20 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class Orthophoniste implements Serializable {
+public class Orthophoniste implements Serializable  {
     private String nom;
     private String prenom;
     private String adresse;
     private String numero;
     private String mtpasse;
     private String email;
-    private HashMap<Double, Dossier> patients = null;
-    protected Set<Patient> patient;
+    protected HashMap<Double, Dossier> patients =new HashMap<>() ;
+    Double lastKey=0.0;
+    protected Set<Patient> patient= new TreeSet<>();
 
     protected TreeSet<RendezVous> rendezVousSet = new TreeSet<>();
     private TreeSet<Consultation> ConsultationSet;
@@ -117,24 +119,42 @@ public class Orthophoniste implements Serializable {
     }
 
     public void addPatient(Dossier d) {
-        patients.put(d.getNum(), d);
+        Double key = lastKey + 1;
+        d.setnumdossier(key);
+        patients.put(key, d);
+        patient.add(d.getpatient());
+        lastKey=key;
+        System.out.println("puuuted");
     }
 
-    public boolean isPatient(Double d) {// Check if a key exists
-        if (patients.containsKey(d)) {
+    public boolean isPatient(Patient p) {// Check if a patient exists
+        for (Patient patientobj : patient) {
+            if (patientobj.getnom().equals(p.getnom()) && patientobj.getprenom().equals(p.getprenom())) {
+                return true; 
+            }
+        }
+        return false; 
+    }
+
+    
+    
+    public boolean exists(Double d){
+        if (patients.containsKey(d)){
             return true;
-        } else {
+        }
+        else {
             return false;
         }
     }
 
     public Dossier getPatient(Double d) {
-        if (isPatient(d)) {
+        if (exists(d)) {
             return patients.get(d);
         } else {
             System.out.println("not patient");
             return null;
         }
     }
+
 
 }

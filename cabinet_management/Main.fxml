@@ -15,7 +15,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cabinet_management.MainController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/20.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cabinet_management.MainController">
    <children>
       <AnchorPane prefHeight="200.0" prefWidth="200.0">
          <children>
@@ -153,11 +153,41 @@
                                           <Font size="20.0" />
                                        </font>
                                     </Label>
-                                    <TableView fx:id="patientstab" layoutX="6.0" layoutY="102.0" prefHeight="454.0" prefWidth="886.0">
+                                    <Button fx:id="addP_btn" layoutX="300.0" layoutY="50.0" mnemonicParsing="false" onAction="#addPatient" text="add patient" />
+                                    <AnchorPane fx:id="patient_form" layoutX="6.0" layoutY="405.0" prefHeight="150.0" prefWidth="886.0">
+                                       <children>
+                                          <AnchorPane fx:id="extra_infoY" layoutX="180.0" prefHeight="150.0" prefWidth="700.0">
+                                             <children>
+                                                <TextField fx:id="lieu1" layoutX="20.0" layoutY="20.0" promptText="LIEU NAISSANCE" />
+                                                <TextField fx:id="adress1" layoutX="20.0" layoutY="60.0" promptText="ADRESSE" />
+                                                <TextField fx:id="telparent" layoutX="20.0" layoutY="100.0" promptText="NUM PARENT" />
+                                                <ComboBox fx:id="ClasseDetude" layoutX="300.0" layoutY="20.0" prefWidth="150.0" promptText="CLASSE ETUDE" />
+                                                <Button layoutX="200.0" layoutY="100.0" mnemonicParsing="false" onAction="#done" text="DONE" />
+                                             </children>
+                                          </AnchorPane>
+                                          <AnchorPane fx:id="extra_infoA" layoutX="190.0" layoutY="10.0" prefHeight="150.0" prefWidth="700.0">
+                                             <children>
+                                                <TextField fx:id="lieu" layoutX="20.0" layoutY="20.0" promptText="LIEU NAISSANCE" />
+                                                <TextField fx:id="adress" layoutX="20.0" layoutY="60.0" promptText="ADRESSE" />
+                                                <TextField fx:id="tel" layoutX="20.0" layoutY="100.0" promptText="TEL" />
+                                                <TextField fx:id="diplome" layoutX="200.0" layoutY="20.0" promptText="DIPLOME" />
+                                                <TextField fx:id="profession" layoutX="200.0" layoutY="60.0" promptText="PROFESSION" />
+                                                <Button layoutX="200.0" layoutY="100.0" mnemonicParsing="false" onAction="#done" text="DONE" />
+                                             </children>
+                                          </AnchorPane>
+                                          <TextField fx:id="numdos" promptText="numero de dossier a rechercher" />
+                                          <TextField fx:id="patient_prenom" layoutX="10.0" layoutY="20.0" promptText="nom" />
+                                          <TextField fx:id="patient_nom" layoutX="10.0" layoutY="60.0" promptText="prénom" />
+                                          <DatePicker fx:id="AGE" layoutX="10.0" layoutY="90.0" />
+                                          <Button layoutX="10.0" layoutY="120.0" mnemonicParsing="false" onAction="#submission" text="Add" />
+                                       </children>
+                                    </AnchorPane>
+                                    <TableView fx:id="patientstab" layoutX="6.0" layoutY="102.0" prefHeight="300.0" prefWidth="886.0">
                                       <columns>
-                                        <TableColumn fx:id="patient_name" prefWidth="209.33328247070312" text="Full Name" />
+                                        <TableColumn fx:id="patient_fname" prefWidth="209.33328247070312" text="first Name" />
+                                        <TableColumn fx:id="patient_lname" prefWidth="209.33328247070312" text="last Name" />
                                         <TableColumn fx:id="patient_id" prefWidth="236.00006103515625" text="File ID" />
-                                          <TableColumn prefWidth="133.99996948242188" text="Gender" />
+                                          <TableColumn prefWidth="133.99996948242188" text="Adulte" />
                                           <TableColumn prefWidth="134.6666259765625" text="Contact Number" />
                                       </columns>
                                     </TableView>
@@ -200,13 +230,13 @@
                                        </font>
                                     </Label>
                                     <Label layoutX="26.0" layoutY="46.0" text="Full Name" textFill="WHITE" />
-                                    <Label fx:id="infopatnamefull" layoutX="110.0" layoutY="46.0" prefHeight="17.0" prefWidth="117.0" text="Full Name" textFill="WHITE" />
+                                    <Label fx:id="f" layoutX="110.0" layoutY="46.0" prefHeight="17.0" prefWidth="117.0" text="Full Name" textFill="WHITE" />
                                     <Label layoutX="26.0" layoutY="63.0" text="birthdate" textFill="WHITE" />
-                                    <Label fx:id="infopatbd" layoutX="110.0" layoutY="63.0" prefHeight="17.0" prefWidth="117.0" text="EX : 12/12/2003" textFill="WHITE" />
+                                    <Label fx:id="b" layoutX="110.0" layoutY="63.0" prefHeight="17.0" prefWidth="117.0" text="EX : 12/12/2003" textFill="WHITE" />
                                     <Label layoutX="26.0" layoutY="80.0" text="birth place" textFill="WHITE" />
-                                    <Label fx:id="infopatbp" layoutX="101.0" layoutY="80.0" prefHeight="17.0" prefWidth="117.0" text="Annaba" textFill="WHITE" />
+                                    <Label fx:id="l" layoutX="101.0" layoutY="80.0" prefHeight="17.0" prefWidth="117.0" text="Annaba" textFill="WHITE" />
                                     <Label layoutX="26.0" layoutY="97.0" text="adress" textFill="WHITE" />
-                                    <Label fx:id="infopatad" layoutX="101.0" layoutY="97.0" prefHeight="17.0" prefWidth="117.0" text="Annaba" textFill="WHITE" />
+                                    <Label fx:id="a" layoutX="101.0" layoutY="97.0" prefHeight="17.0" prefWidth="117.0" text="Annaba" textFill="WHITE" />
                                     <AnchorPane fx:id="kid_info" layoutX="26.0" layoutY="133.0" prefHeight="77.0" prefWidth="199.0" visible="false">
                                        <children>
                                           <Label layoutX="14.0" layoutY="17.0" text="Full Name" textFill="WHITE" />
@@ -218,7 +248,7 @@
                                        </children>
                                     </AnchorPane>
                                     <Label layoutX="29.0" layoutY="114.0" text="Age" textFill="WHITE" />
-                                    <Label fx:id="infopatage" layoutX="104.0" layoutY="114.0" prefHeight="17.0" prefWidth="117.0" text="20" textFill="WHITE" />
+                                    <Label fx:id="agepatient" layoutX="104.0" layoutY="114.0" prefHeight="17.0" prefWidth="117.0" text="20" textFill="WHITE" />
                                     <AnchorPane fx:id="adult_info" layoutX="26.0" layoutY="133.0" prefHeight="77.0" prefWidth="199.0" visible="false">
                                        <children>
                                           <Label fx:id="infoadultenum" layoutX="74.0" layoutY="54.0" prefHeight="17.0" prefWidth="117.0" text="num" textFill="WHITE" />
