@@ -1,14 +1,17 @@
 package cabinet_management;
 
+import java.io.Serializable;
+
 import java.util.List;
 
-public class Bo {
+public class Bo implements Serializable {
     private List<Epreuve> epreuvescliniques;
     private List<Trouble> Diagnostic;
     private String projettherapeutic;
-
+a
     public void Bo() {
     };
+
 
     public void Bo(List<Epreuve> epreuvescliniques, List<Trouble> Diagnostic, String projettherapeutic) {
         this.epreuvescliniques = epreuvescliniques;

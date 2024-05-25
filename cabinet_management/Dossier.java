@@ -1,40 +1,47 @@
 package cabinet_management;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.UUID;
 
-public class Dossier {
-    private HashSet<Bo> bilans = null;
+public class Dossier implements Serializable {
+    private HashSet<Bo> bilans;
     private Patient patient;
-    private double numerodossier;
-    private HashMap<LocalDate, RendezVous> RendezVous;
+    private String numerodossier; // Changed to String to accommodate UUID
+    private HashMap<LocalDate, RendezVous> rendezVous;
     private FicheSuivi fiches;
 
+    public Dossier(Patient patient) {
+        this.patient = patient;
+        this.bilans = new HashSet<>();
+        this.rendezVous = new HashMap<>();
+        this.numerodossier = generateUniqueSerialNumber();
+        patient.setAdmet();
+    }
+
+    private String generateUniqueSerialNumber() {
+        return UUID.randomUUID().toString();
+    }
+
     public void ajouterBo(Bo b) {
-        if (b.getClass().getName() == "Boinitial") {
-
+        if (b.getClass().getName().equals("Boinitial")) {
             System.out.println("there is already a bo");
-
         } else {
-
             bilans.add(b);
         }
     }
 
-    public void CreerNvDossier(Bo b, double num, Patient patient) {
-        if (b.getClass().getName() == "Boinitial") {
-            if (bilans == null) {
-                bilans.add(b);
-                this.numerodossier = num;
-                this.patient = patient;
-            }
-
-        }
+    public Patient getPatient() {
+        return patient;
     }
 
-    public Double getNum() {
+    public void addRendezVous(LocalDate l, RendezVous r) {
+        rendezVous.put(l, r);
+    }
+
+    public String getNum() {
         return numerodossier;
     }
-
 }

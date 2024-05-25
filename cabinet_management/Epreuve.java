@@ -1,8 +1,9 @@
 package cabinet_management;
 
 import java.util.List;
+import java.io.Serializable;
 
-public class Epreuve {
+public class Epreuve implements Serializable {
     private List<Test> TestList;
     private List<String> observations;
 

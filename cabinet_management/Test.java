@@ -1,6 +1,8 @@
 package cabinet_management;
 
-public abstract class Test {
+import java.io.Serializable;
+
+public abstract class Test implements Serializable {
     private String nom;
     private double score;
     private String conclusion;

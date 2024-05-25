@@ -1,22 +1,34 @@
 package cabinet_management;
 
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
+import javafx.beans.property.SimpleDoubleProperty;
+
 
 import javax.swing.Action;
 
 import javafx.beans.Observable;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -27,6 +39,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
 public class MainController implements Initializable {
     private Management management = new Management();
@@ -131,15 +144,7 @@ public class MainController implements Initializable {
     @FXML
     private TableColumn<?, ?> numdossiersuivitab;
 
-    @FXML
-    private TableColumn<?, ?> patient_id;
-    @FXML
-    private TableColumn<?, ?> patient_contact;
-    @FXML
-    private TableColumn<?, ?> patient_gender;
-
-    @FXML
-    private TableColumn<?, ?> patient_name;
+   
 
     @FXML
     private AnchorPane patient_page;
@@ -158,9 +163,7 @@ public class MainController implements Initializable {
 
     @FXML
     private TableView<RendezVous> tableAtelier;
-    @FXML
-    private TableView<RendezVous> patientstab;
-
+   
     @FXML
     private TableView<RendezVous> tableConsultaion;
 
@@ -172,6 +175,89 @@ public class MainController implements Initializable {
 
     @FXML
     private Label window_name;
+
+    @FXML
+    private AnchorPane patient_form;
+    
+    @FXML
+    private Button addP_btn;
+
+    @FXML 
+    private TextField patient_nom;
+
+    @FXML
+    private TextField patient_prenom;
+
+    @FXML
+    private AnchorPane extra_infoY;
+
+    @FXML
+    private AnchorPane extra_infoA;
+
+    @FXML
+    private DatePicker AGE;
+
+    @FXML
+    private TextField lieu;
+
+    @FXML
+    private TextField adress;
+    
+    @FXML
+    private TextField tel;
+
+    @FXML
+    private TextField profession;
+
+    @FXML
+    private TextField diplome;
+
+    @FXML
+    private TextField telparent;
+
+    @FXML
+    private TextField lieu1;
+
+    @FXML
+    private TextField adress1;
+
+    @FXML
+    private ComboBox<ClasseEtude> ClasseDetude;
+
+    @FXML
+    private TableColumn<Dossier, Double> patient_id;
+    @FXML
+    private TableColumn<Dossier, String> patient_lname;
+    @FXML
+    private TableColumn<Dossier, String> patient_fname;
+    @FXML
+    private TableColumn<Dossier,String> patient_age;
+
+    @FXML
+    private TableView<Dossier> patientstab;
+
+    @FXML
+    private Label a;
+
+    @FXML
+    private Label f;
+
+    @FXML
+    private Label l;
+
+    @FXML
+    private Label b;
+
+    @FXML
+    private TextField numdos;
+
+    @FXML
+    private Label agepatient;
+
+
+    private ObservableList<Dossier> dossierList;
+    
+
 
     /*
      * public ObservableList<RendezVous> getAppData(){
@@ -192,6 +278,7 @@ public class MainController implements Initializable {
         gender_Consultation.setItems(listData);
 
     }
+    
 
     public void appointmentStatusList() {
         List<String> listS = new ArrayList<>();
@@ -205,22 +292,6 @@ public class MainController implements Initializable {
 
     }
 
-    public void checkSuivi() {
-
-    }
-
-    public Patient checkConsultation(String nom) {
-        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
-
-        for (Patient p : loggedInOrthophonist.patient) {
-            if (p.getNom().equals(nom)) {
-                return p;
-            }
-
-        }
-        return null;
-    }
-
     public void AddAppBtn(ActionEvent e) {
         if (e.getSource() == addapp) {
             AlertMessage a = new AlertMessage();
@@ -231,50 +302,18 @@ public class MainController implements Initializable {
 
                 LocalTime localTime = LocalTime.of(houre, minute);
                 Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
-                System.out.println(loggedInOrthophonist.getPatient());
+
                 if (loggedInOrthophonist.rendezVousExists(date.getValue(), localTime)) {
                     a.errorMessg("already taken");
                 } else {
-                    Patient p = checkConsultation(namecon.getText());
                     if (type_app.getValue().equals("Consultation")) {
-                        System.out.println("1");
                         Consultation c = new Consultation(
                                 Integer.parseInt(ageconsultation.getText()),
                                 (String) gender_Consultation.getValue(),
                                 namecon.getText(),
                                 date.getValue(), localTime);
-                        System.out.println(c.getAge());
-
-                        if (p != null) {
-                            System.out.println(p.getNom());
-
-                            loggedInOrthophonist.ajouterc(c);
-                            if (p.isAdmet()) {
-                                Dossier d = loggedInOrthophonist.chercheDossier(p.getNom());
-                                d.addRendezVous(c.getDate(), c);
-                            }
-                        } else {
-
-                            if (Integer.parseInt(ageconsultation.getText()) >= 19) {
-                                System.out.println("oui");
-
-                                p = new Adulte(namecon.getText());
-                                System.out.println(p.getNom());
-
-                                loggedInOrthophonist.addP(p);
-                                loggedInOrthophonist.ajouterc(c);
-
-                            } else {
-                                p = new Enfant(namecon.getText());
-
-                                loggedInOrthophonist.addP(p);
-                                loggedInOrthophonist.ajouterc(c);
-
-                            }
-
-                        }
+                        loggedInOrthophonist.ajouterc(c);
                     } else if (type_app.getValue().equals("Suivi")) {
-
                         Suivi ss = new Suivi(
                                 enlign.isSelected(),
                                 date.getValue(),
@@ -282,17 +321,6 @@ public class MainController implements Initializable {
                                 namesuivi.getText() // Assuming namesuivi is the patient's name field
                         );
                         loggedInOrthophonist.ajouters(ss);
-                        if (p.isAdmet()) {
-                            Dossier d = loggedInOrthophonist.chercheDossier(p.getNom());
-                            d.addRendezVous(ss.getDate(), ss);
-                        } else {
-                            Dossier d = new Dossier(p);
-                            d.addRendezVous(ss.getDate(), ss);
-                            loggedInOrthophonist.addPatient(d);
-                        }
-                        // Dossier d = loggedInOrthophonist.chercheDossier(p.getNom());
-                        // d.addRendezVous(ss.getDate(), ss);
-
                     } else if (type_app.getValue().equals("atelier")) {
                         Atelier atelier = new Atelier(
                                 thema.getText(),
@@ -318,6 +346,8 @@ public class MainController implements Initializable {
         }
         return listData;
     }
+
+    
 
     public ObservableList<RendezVous> appointmentGetData() {
         ObservableList<RendezVous> listData = FXCollections.observableArrayList();
@@ -349,20 +379,17 @@ public class MainController implements Initializable {
         tableConsultaion.setItems(appointmentListData);
         tableAtelier.setItems(appointmentListData);
         tablesuivi.setItems(appointmentListData);
-        patientstab.setItems(appointmentListData);
 
         // Set up the nameSuivitab and enligneSuivitab columns for Suivi appointments
         namesuivitab.setCellValueFactory(new PropertyValueFactory<>("nom"));
         eopsuivitab.setCellValueFactory(new PropertyValueFactory<>("e"));
-        numdossiersuivitab.setCellValueFactory(new PropertyValueFactory<>("numerodossier"));
 
         // Set up other columns similarly, assuming these methods exist in RendezVous
         namecontab.setCellValueFactory(new PropertyValueFactory<>("nom"));
         agecontab.setCellValueFactory(new PropertyValueFactory<>("age"));
         datecontab.setCellValueFactory(new PropertyValueFactory<>("date"));
         duationcontab.setCellValueFactory(new PropertyValueFactory<>("duree"));
-        // gendercontab.setCellValueFactory(new PropertyValueFactory<>("gender"));
-        patient_name.setCellValueFactory(new PropertyValueFactory<>("nom"));
+        gendercontab.setCellValueFactory(new PropertyValueFactory<>("gender"));
 
     }
 
@@ -384,10 +411,13 @@ public class MainController implements Initializable {
             } else {
                 if (event.getSource() == patients_btn) {
                     patient_page.setVisible(false);
-
+                    patient_form.setVisible(false);
                     dash_form.setVisible(false);
                     patients_form.setVisible(true);
                     app_form.setVisible(false);
+                    showPatientData();
+
+                    
                 }
             }
         }
@@ -417,13 +447,157 @@ public class MainController implements Initializable {
         nav_name.setText(name);
     }
 
+    public void addPatient(ActionEvent event){
+        patient_form.setVisible(true);
+        extra_infoA.setVisible(false);
+        extra_infoY.setVisible(false);
+    }
+
+
+     public void showPatientData() {
+        patient_id.setCellValueFactory(cellData -> {
+    Double numero = cellData.getValue().getNum();
+    return new SimpleDoubleProperty(numero).asObject();
+});
+        //String doubleString = Double.toString(doss1.getNum());
+
+        patient_fname.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getpatient().getprenom()));
+        patient_lname.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getpatient().getnom()));
+
+
+        // Create an observable list for the dossiers
+        dossierList = FXCollections.observableArrayList();
+        patientstab.setItems(dossierList);
+        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+
+        dossierList.clear(); // Clear existing data
+        dossierList.addAll(loggedInOrthophonist.getPatients().values()); // Add new data
+    }
+
+    public void showDossierData(){
+        f.setText(doss1.getpatient().getnom() + " " + doss1.getpatient().getprenom());
+        a.setText(doss1.getpatient().getadress());
+        l.setText(doss1.getpatient().getlieu());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String dateString = doss1.getpatient().getdate().format(formatter);
+        b.setText(dateString);
+        int age=doss1.getpatient().getAge(doss1.getpatient().getdate());
+        String y =Integer.toString(age);
+        System.out.println(y);
+        agepatient.setText(y);
+
+
+    }
+
+
+    private Patient patient;
+    Dossier doss1;
+
+
+    public void submission(ActionEvent event ){
+        String nom = patient_nom.getText();
+        String prenom = patient_prenom.getText();
+        LocalDate year = AGE.getValue();
+        String text=numdos.getText();
+        double id = Double.parseDouble(text);
+
+
+        ClasseDetude.getItems().setAll(ClasseEtude.values());
+
+        patient= new Patient(nom,prenom,year);
+        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+
+        
+
+         if (loggedInOrthophonist.isPatient(patient)){
+                    patient_page.setVisible(true);
+                    patient_form.setVisible(false);
+                    dash_form.setVisible(false);
+                    patients_form.setVisible(false);
+                    app_form.setVisible(false);
+                    patient_page.setVisible(true);
+                    doss1=loggedInOrthophonist.getPatient(id);
+                    showDossierData();
+
+
+                    System.out.println("siiiiiii");
+
+        }
+        else {
+            System.out.println("hereeeee");
+            if (patient.isAdulte(year)){
+                System.out.println("adulte");
+                extra_infoY.setVisible(false);
+                extra_infoA.setVisible(true);
+            }
+            else{
+                System.out.println("young");
+                extra_infoY.setVisible(true);
+                extra_infoA.setVisible(false);
+            }
+            
+
+        }
+       
+    }
+
+    public void done(ActionEvent event){
+
+        if (patient.getAdulte()) {
+            String Lieu = lieu.getText();
+            String adresse = adress.getText();
+            String proffession = profession.getText();
+            String telephone = tel.getText();
+            String diplom = diplome.getText();
+            patient.setadress(adresse);
+            patient.setlieu(Lieu);
+            Adulte adulte= new Adulte(patient ,diplom,proffession,telephone);
+            doss1= new Dossier(adulte);
+
+
+        }
+        else{
+            String Lieu1 = lieu1.getText();
+            String adresse1 = adress1.getText();
+            String tel1 = telparent.getText();
+            ClasseEtude classe = ClasseDetude.getValue();
+            patient.setadress(adresse1);
+            patient.setlieu(Lieu1);
+            Enfant enfant=new Enfant(patient, classe, tel1);
+            doss1= new Dossier(enfant);
+
+        }
+        
+
+        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+        if (loggedInOrthophonist.isPatient(patient)){
+                    patient_page.setVisible(true);
+                    patient_form.setVisible(false);
+                    dash_form.setVisible(false);
+                    patients_form.setVisible(false);
+                    app_form.setVisible(false);
+                    System.out.println("siiiiiii");
+
+        }
+        else {
+            System.out.println("hereeeee");
+            loggedInOrthophonist.addPatient(doss1);
+
+        }
+        management.sauvegarderUtilisateurs();
+        showPatientData();
+
+    }
+   
+
+
     Management m = new Management();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // kkk
         displayName();
-        showAppData();
+
         appointmentGenderList();
         appointmentStatusList();
 

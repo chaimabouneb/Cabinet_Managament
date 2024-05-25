@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -14,16 +15,70 @@ public class Orthophoniste implements Serializable {
     private String numero;
     private String mtpasse;
     private String email;
-    private HashMap<Double, Dossier> patients = null;
-    protected Set<Patient> patient;
-
+    private HashMap<String, Dossier> patients = new HashMap<>();
+    protected Set<Patient> patient = new HashSet<>();
     protected TreeSet<RendezVous> rendezVousSet = new TreeSet<>();
-    private TreeSet<Consultation> ConsultationSet;
-    private TreeSet<Suivi> SuiviSet;
+    private TreeSet<Consultation> ConsultationSet = new TreeSet<>();
+    private TreeSet<Suivi> SuiviSet = new TreeSet<>();
     private TreeSet<Atelier> AtelierSet = new TreeSet<>();
 
-    // Other methods...
+    // Constructor for Orthophoniste with only name
+    public Orthophoniste(String nom) {
+        this.nom = nom;
+        // Initialize collections
+        this.ConsultationSet = new TreeSet<>();
+        this.SuiviSet = new TreeSet<>();
+        this.AtelierSet = new TreeSet<>();
+        this.patient = new HashSet<>();
+        this.patients = new HashMap<>();
+    }
 
+    public void addP(Patient p) {
+        this.patient.add(p);
+    }
+
+    // Constructor for Orthophoniste with all fields
+    public Orthophoniste(String nom, String prenom, String adresse, String numero,
+            String email, String p) {
+        this.nom = nom;
+        this.prenom = prenom;
+        this.adresse = adresse;
+        this.numero = numero;
+        this.email = email;
+        this.mtpasse = p;
+        this.ConsultationSet = new TreeSet<>();
+        this.SuiviSet = new TreeSet<>();
+        this.AtelierSet = new TreeSet<>();
+        this.patient = new HashSet<>();
+        this.patients = new HashMap<>();
+    }
+
+    // Getters and Setters for fields
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public HashMap<String, Dossier> getPatients() {
+        return patients;
+    }
+
+    public void setPatients(HashMap<String, Dossier> patients) {
+        this.patients = patients;
+    }
+
+    public Set<Patient> getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Set<Patient> patient) {
+        this.patient = patient;
+    }
+
+    // Methods for managing appointments and patients
     public TreeSet<RendezVous> getRendezVousSet() {
         return rendezVousSet;
     }
@@ -40,13 +95,12 @@ public class Orthophoniste implements Serializable {
         return AtelierSet;
     }
 
+    public Dossier chercheDossier(String nom) {
+        return patients.get(nom);
+    }
+
     public boolean rendezVousExists(LocalDate date, LocalTime heure) {
-        for (RendezVous rendezVous : rendezVousSet) {
-            if (rendezVous.getDate().equals(date) && rendezVous.getHeure().equals(heure)) {
-                return true; // RendezVous with the given date and hour exists
-            }
-        }
-        return false; // RendezVous with the given date and hour does not exist
+        return rendezVousSet.stream().anyMatch(rv -> rv.getDate().equals(date) && rv.getHeure().equals(heure));
     }
 
     public boolean authentifierPasse(String passe) throws PassIncorrectException {
@@ -79,62 +133,17 @@ public class Orthophoniste implements Serializable {
     public void ajoutera(Atelier c) {
         AtelierSet.add(c);
         this.rendezVousSet.add(c);
-
-    }
-
-    public Orthophoniste(String nom) {
-        this.nom = nom;
-    }
-
-    public Orthophoniste(String nom, String prenom, String adresse, String numero,
-            String email, String p) {
-        this.nom = nom;
-        this.prenom = prenom;
-        this.adresse = adresse;
-        this.numero = numero;
-        this.email = email;
-        this.mtpasse = p;
-        this.ConsultationSet = new TreeSet<>();
-        this.SuiviSet = new TreeSet<>();
-        this.AtelierSet = new TreeSet<>();
-
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public String getNom() {
-        return nom;
-    }
-
-    public HashMap getPatients() {
-        return patients;
-    }
-
-    public void setPatients(HashMap p) {
-        patients = p;
     }
 
     public void addPatient(Dossier d) {
-        patients.put(d.getNum(), d);
+        patients.put(d.getPatient().getNom(), d);
     }
 
-    public boolean isPatient(Double d) {// Check if a key exists
-        if (patients.containsKey(d)) {
-            return true;
-        } else {
-            return false;
-        }
+    public boolean isPatient(Double d) {
+        return patients.containsKey(d);
     }
 
     public Dossier getPatient(Double d) {
-        if (isPatient(d)) {
-            return patients.get(d);
-        } else {
-            System.out.println("not patient");
-            return null;
-        }
+        return patients.get(d);
     }
-
 }
