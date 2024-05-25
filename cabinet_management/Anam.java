@@ -1,6 +1,10 @@
 package cabinet_management;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
+
+import cabinet_management.Cat_Quest;
+
 
 public class Anam {
 
@@ -16,6 +20,7 @@ public class Anam {
 
     public String getQuestion(Cat_Quest categorie) {
         return questions.get(categorie);
-    }
+
+    
 }
 

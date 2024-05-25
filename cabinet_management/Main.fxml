@@ -187,8 +187,6 @@
                                         <TableColumn fx:id="patient_fname" prefWidth="209.33328247070312" text="first Name" />
                                         <TableColumn fx:id="patient_lname" prefWidth="209.33328247070312" text="last Name" />
                                         <TableColumn fx:id="patient_id" prefWidth="236.00006103515625" text="File ID" />
-                                          <TableColumn prefWidth="133.99996948242188" text="Adulte" />
-                                          <TableColumn prefWidth="134.6666259765625" text="Contact Number" />
                                       </columns>
                                     </TableView>
                                  </children>

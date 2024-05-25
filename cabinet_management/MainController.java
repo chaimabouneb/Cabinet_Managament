@@ -10,10 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
+import javafx.beans.property.SimpleDoubleProperty;
+
 
 import javax.swing.Action;
 
 import javafx.beans.Observable;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -227,6 +230,9 @@ public class MainController implements Initializable {
     private TableColumn<Dossier, String> patient_lname;
     @FXML
     private TableColumn<Dossier, String> patient_fname;
+    @FXML
+    private TableColumn<Dossier,String> patient_age;
+
     @FXML
     private TableView<Dossier> patientstab;
 
@@ -449,9 +455,12 @@ public class MainController implements Initializable {
 
 
      public void showPatientData() {
+        patient_id.setCellValueFactory(cellData -> {
+    Double numero = cellData.getValue().getNum();
+    return new SimpleDoubleProperty(numero).asObject();
+});
         //String doubleString = Double.toString(doss1.getNum());
 
-        //patient_id.setCellValueFactory(cellData -> new SimpleStringProperty(doubleString));
         patient_fname.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getpatient().getprenom()));
         patient_lname.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getpatient().getnom()));
 
