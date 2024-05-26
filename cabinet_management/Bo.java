@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 public class Bo implements Serializable {
+    private LocalDate crea ;
     private List<Epreuve> epreuvescliniques;
 
     private List<Epreuve> epreuvesCliniques;
@@ -13,10 +15,13 @@ public class Bo implements Serializable {
     private List<Trouble> Diagnostic;
     private String projettherapeutic;
 
-    public void Bo() {
+    public Bo(LocalDate d) {
+        this.crea=d;
         this.epreuvesCliniques = new ArrayList<>();
         this.Diagnostic = new ArrayList<>();
     };
+
+
 
     public void Bo(List<Epreuve> epreuvescliniques, List<Trouble> Diagnostic, String projettherapeutic) {
         this.epreuvesCliniques = epreuvescliniques;

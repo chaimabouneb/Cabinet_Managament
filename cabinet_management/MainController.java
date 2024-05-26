@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -33,6 +34,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 
 
@@ -40,6 +42,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -276,6 +279,12 @@ public class MainController implements Initializable {
     @FXML
     private BorderPane maine;
 
+    @FXML
+    private ListView<String> questionListView;
+
+    @FXML
+    private TextField answerTextField;
+
 
 
     private ObservableList<Dossier> dossierList;
@@ -288,376 +297,896 @@ public class MainController implements Initializable {
      * 
      * }
      */ public void appointmentGenderList() {
+
         List<String> listG = new ArrayList<>();
 
+
+
+
         for (String data : Data.gender) {
+
             listG.add(data);
+
             System.out.println(data);
+
         }
+
+
+
 
         ObservableList listData = FXCollections.observableArrayList(listG);
+
         gender_Consultation.setItems(listData);
 
+
+
+
     }
+
+
+
 
     public void appointmentStatusList() {
+
         List<String> listS = new ArrayList<>();
 
+
+
+
         for (String data : Data.status) {
+
             listS.add(data);
+
         }
 
+
+
+
         ObservableList listData = FXCollections.observableArrayList(listS);
+
         type_app.setItems(listData);
 
+
+
+
     }
+
+
+
 
     public void checkSuivi() {
 
+
+
+
     }
+
+
+
 
     public Patient checkConsultation(String nom) {
+
         Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+
+
+
 
         for (Patient p : loggedInOrthophonist.patient) {
+
             if (p.getNom().equals(nom)) {
+
                 return p;
+
             }
 
+
+
+
         }
+
         return null;
+
     }
+
+
+
 
     public void AddAppBtn(ActionEvent e) {
+
         if (e.getSource() == addapp) {
+
             AlertMessage a = new AlertMessage();
 
+
+
+
             try {
+
                 int houre = Integer.parseInt(hour.getText());
+
                 int minute = Integer.parseInt(min.getText());
 
+
+
+
                 LocalTime localTime = LocalTime.of(houre, minute);
+
                 Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+
                 System.out.println(loggedInOrthophonist.getPatient());
+
                 if (loggedInOrthophonist.rendezVousExists(date.getValue(), localTime)) {
+
                     a.errorMessg("already taken");
+
                 } else {
+
                     Patient p = checkConsultation(namecon.getText());
+
                     if (type_app.getValue().equals("Consultation")) {
+
                         System.out.println("1");
+
                         Consultation c = new Consultation(
+
                                 Integer.parseInt(ageconsultation.getText()),
+
                                 (String) gender_Consultation.getValue(),
+
                                 namecon.getText(),
+
                                 date.getValue(), localTime);
+
                         System.out.println(c.getAge());
 
+
+
+
                         if (p != null) {
+
                             System.out.println(p.getNom());
 
+
+
+
                             loggedInOrthophonist.ajouterc(c);
+
                             if (p.isAdmet()) {
+
                                 Dossier d = loggedInOrthophonist.chercheDossier(p.getNom());
+
                                 d.addRendezVous(c.getDate(), c);
+
                             }
+
                         } else {
+
+
+
 
                             if (Integer.parseInt(ageconsultation.getText()) >= 19) {
+
                                 System.out.println("oui");
 
+
+
+
                                 p = new Adulte(namecon.getText());
+
                                 System.out.println(p.getNom());
 
+
+
+
                                 loggedInOrthophonist.addP(p);
+
                                 loggedInOrthophonist.ajouterc(c);
+
+
+
 
                             } else {
+
                                 p = new Enfant(namecon.getText());
 
+
+
+
                                 loggedInOrthophonist.addP(p);
+
                                 loggedInOrthophonist.ajouterc(c);
+
+
+
 
                             }
 
+
+
+
                         }
+
                     } else if (type_app.getValue().equals("Suivi")) {
 
+
+
+
                         Suivi ss = new Suivi(
+
                                 enlign.isSelected(),
+
                                 date.getValue(),
+
                                 localTime,
+
                                 namesuivi.getText() // Assuming namesuivi is the patient's name field
+
                         );
+
                         loggedInOrthophonist.ajouters(ss);
+
                         if (p.isAdmet()) {
+
                             Dossier d = loggedInOrthophonist.chercheDossier(p.getNom());
+
                             d.addRendezVous(ss.getDate(), ss);
+
                         } else {
+
                             Dossier d = new Dossier(p);
+
                             d.addRendezVous(ss.getDate(), ss);
+
                             loggedInOrthophonist.addPatient(d);
+
                         }
+
                         // Dossier d = loggedInOrthophonist.chercheDossier(p.getNom());
+
                         // d.addRendezVous(ss.getDate(), ss);
 
+
+
+
                     } else if (type_app.getValue().equals("atelier")) {
+
                         Atelier atelier = new Atelier(
+
                                 thema.getText(),
+
                                 date.getValue(),
+
                                 localTime);
+
                         loggedInOrthophonist.ajoutera(atelier);
+
                     }
+
                     showAppData();
+
                     a.succesMessage("success");
+
                     management.sauvegarderUtilisateurs();
+
                 }
+
             } catch (NumberFormatException ex) {
+
                 a.errorMessg("Invalid time format");
+
             }
+
         }
+
     }
+
+
+
 
     public ObservableList<Patient> PateintsgetData() {
+
         ObservableList<Patient> listData = FXCollections.observableArrayList();
 
+
+
+
         for (Patient r : Data.orthophoniste.patient) {
+
             listData.add(r);
+
         }
+
         return listData;
+
     }
+
+
+
 
     public ObservableList<RendezVous> appointmentGetData() {
+
         ObservableList<RendezVous> listData = FXCollections.observableArrayList();
+
         Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
 
+
+
+
         if (loggedInOrthophonist != null) {
+
+            System.out.println("trii");
+
             if ("Consultation".equals(type_app.getValue())) {
+
                 TreeSet<Consultation> consultations = loggedInOrthophonist.getConsultations();
-                if (consultations != null && !consultations.isEmpty()) {
+
+                if (!consultations.isEmpty()) {
+
                     listData.addAll(consultations);
+
+                    System.out.println("true bb");
+
                 }
+
             } else if ("Suivi".equals(type_app.getValue())) {
+
                 TreeSet<Suivi> suivi = loggedInOrthophonist.getSuivi();
+
                 if (suivi != null && !suivi.isEmpty()) {
+
                     listData.addAll(suivi);
+
                 }
+
             } else if ("atelier".equals(type_app.getValue())) {
+
                 TreeSet<Atelier> ateliers = loggedInOrthophonist.getAtelier();
+
                 if (ateliers != null && !ateliers.isEmpty()) {
+
                     listData.addAll(ateliers);
+
                 }
+
             }
+
         }
+
         return listData;
+
     }
+
+
+
 
     public void showAppData() {
+
         ObservableList<RendezVous> appointmentListData = appointmentGetData();
-        tableConsultaion.setItems(appointmentListData);
-        tableAtelier.setItems(appointmentListData);
-        tablesuivi.setItems(appointmentListData);
-        patientstabb.setItems(appointmentListData);
 
-        // Set up the nameSuivitab and enligneSuivitab columns for Suivi appointments
-        namesuivitab.setCellValueFactory(new PropertyValueFactory<>("nom"));
-        eopsuivitab.setCellValueFactory(new PropertyValueFactory<>("e"));
-        numdossiersuivitab.setCellValueFactory(new PropertyValueFactory<>("numerodossier"));
+        System.out.println("Data size: " + appointmentListData.size()); // Debugging line
+        bo_init.setVisible(false);
 
-        // Set up other columns similarly, assuming these methods exist in RendezVous
-        namecontab.setCellValueFactory(new PropertyValueFactory<>("nom"));
-        agecontab.setCellValueFactory(new PropertyValueFactory<>("age"));
-        datecontab.setCellValueFactory(new PropertyValueFactory<>("date"));
-        duationcontab.setCellValueFactory(new PropertyValueFactory<>("duree"));
-        // gendercontab.setCellValueFactory(new PropertyValueFactory<>("gender"));
-        patient_name.setCellValueFactory(new PropertyValueFactory<>("nom"));
+
+        if (appointmentListData.isEmpty()) {
+
+            System.out.println("No data available");
+
+        } else {
+
+            tableConsultaion.setItems(appointmentListData);
+
+            tableAtelier.setItems(appointmentListData);
+
+            tablesuivi.setItems(appointmentListData);
+
+
+
+
+            // Set up columns
+
+            namesuivitab.setCellValueFactory(new PropertyValueFactory<>("nom"));
+
+            eopsuivitab.setCellValueFactory(new PropertyValueFactory<>("e"));
+
+            numdossiersuivitab.setCellValueFactory(new PropertyValueFactory<>("numerodossier"));
+
+            namecontab.setCellValueFactory(new PropertyValueFactory<>("nom"));
+
+            agecontab.setCellValueFactory(new PropertyValueFactory<>("age"));
+
+            datecontab.setCellValueFactory(new PropertyValueFactory<>("date"));
+
+            duationcontab.setCellValueFactory(new PropertyValueFactory<>("duree"));
+
+        }
 
     }
+
+
+
 
     public void switchForm(ActionEvent event) {
 
+
+
+
         if (event.getSource() == dashboard_btn) {
+
             patient_page.setVisible(false);
 
+
+
+
             dash_form.setVisible(true);
+
             patients_form.setVisible(false);
+
             app_form.setVisible(false);
+
         } else {
+
             if (event.getSource() == app_btn) {
+
                 dash_form.setVisible(false);
+
                 patients_form.setVisible(false);
+
                 patient_page.setVisible(false);
+
                 app_form.setVisible(true);
 
+
+
+
             } else {
+
                 if (event.getSource() == patients_btn) {
+
                     patient_page.setVisible(false);
+
                     patient_form.setVisible(false);
+
                     dash_form.setVisible(false);
+
                     patients_form.setVisible(true);
+
                     app_form.setVisible(false);
+
                     showPatientData();
 
+
+
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+
+
+    public void switchFormTypeRendezv(ActionEvent event) {
+
+
+
+
+        if (event.getSource() == type_app) {
+
+            if (type_app.getValue() == "Consultation") {
+
+                consultation.setVisible(true);
+
+                suivi.setVisible(false);
+
+                atelier.setVisible(false);
+
+            } else if (type_app.getValue() == "Suivi") {
+
+                consultation.setVisible(false);
+
+                suivi.setVisible(true);
+
+                atelier.setVisible(false);
+
+            } else if (type_app.getValue() == "atelier") {
+
+                consultation.setVisible(false);
+
+                suivi.setVisible(false);
+
+                atelier.setVisible(true);
+
+            }
+
+        }
+
+    }
+
+
+
+
+    public void displayName() {
+
+        String name = Data.name;
+
+        nav_name.setText(name);
+
+    }
+
+
+
+
+    public void addPatient(ActionEvent event) {
+
+        patient_form.setVisible(true);
+
+        extra_infoA.setVisible(false);
+
+        extra_infoY.setVisible(false);
+
+    }
+
+
+
+
+    public void showPatientData() {
+
+        patient_id.setCellValueFactory(cellData -> {
+
+            Double numero = cellData.getValue().getNum();
+
+            return new SimpleDoubleProperty(numero).asObject();
+
+        });
+
+        // String doubleString = Double.toString(doss1.getNum());
+
+
+
+
+        patient_fname.setCellValueFactory(
+
+                cellData -> new SimpleStringProperty(cellData.getValue().getpatient().getprenom()));
+
+        patient_lname
+
+                .setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getpatient().getnom()));
+
+
+
+
+        // Create an observable list for the dossiers
+
+        dossierList = FXCollections.observableArrayList();
+
+        patientstab.setItems(dossierList);
+
+        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+
+
+
+
+        dossierList.clear(); // Clear existing data
+
+        dossierList.addAll(loggedInOrthophonist.getPatients().values()); // Add new data
+
+    }
+
+
+
+
+    public void showDossierData() {
+
+        f.setText(doss1.getpatient().getnom() + " " + doss1.getpatient().getprenom());
+
+        a.setText(doss1.getpatient().getadress());
+
+        l.setText(doss1.getpatient().getlieu());
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        String dateString = doss1.getpatient().getdate().format(formatter);
+
+        b.setText(dateString);
+
+        int age = doss1.getpatient().getAge(doss1.getpatient().getdate());
+
+        String y = Integer.toString(age);
+
+        System.out.println(y);
+
+        agepatient.setText(y);
+
+
+
+
+    }
+
+
+
+
+    private Patient patient;
+
+    Dossier doss1;
+
+
+
+
+    public void submission(ActionEvent event) {
+
+        String nom = patient_nom.getText();
+
+        String prenom = patient_prenom.getText();
+
+        LocalDate year = AGE.getValue();
+
+        String text = numdos.getText();
+
+        double id = Double.parseDouble(text);
+
+
+
+
+        ClasseDetude.getItems().setAll(ClasseEtude.values());
+
+
+
+
+        patient = new Patient(nom, prenom, year);
+
+        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+
+
+
+
+        if (loggedInOrthophonist.isPatient(patient)) {
+
+            patient_page.setVisible(true);
+
+            patient_form.setVisible(false);
+
+            dash_form.setVisible(false);
+
+            patients_form.setVisible(false);
+
+            app_form.setVisible(false);
+
+            patient_page.setVisible(true);
+
+            doss1 = loggedInOrthophonist.getPatient(id);
+
+            showDossierData();
+
+
+
+
+            System.out.println("siiiiiii");
+
+
+
+
+        } else {
+
+            System.out.println("hereeeee");
+
+            if (patient.isAdulte(year)) {
+
+                System.out.println("adulte");
+
+                extra_infoY.setVisible(false);
+
+                extra_infoA.setVisible(true);
+
+            } else {
+
+                System.out.println("young");
+
+                extra_infoY.setVisible(true);
+
+                extra_infoA.setVisible(false);
+
+            }
+
+
+
+
+        }
+
+
+
+
+    }
+
+
+
+
+    public void done(ActionEvent event) {
+
+
+
+
+        if (patient.getAdulte()) {
+
+            String Lieu = lieu.getText();
+
+            String adresse = adress.getText();
+
+            String proffession = profession.getText();
+
+            String telephone = tel.getText();
+
+            String diplom = diplome.getText();
+
+            patient.setadress(adresse);
+
+            patient.setlieu(Lieu);
+
+            Adulte adulte = new Adulte(patient, diplom, proffession, telephone);
+
+            doss1 = new Dossier(adulte);
+
+
+
+
+        } else {
+
+            String Lieu1 = lieu1.getText();
+
+            String adresse1 = adress1.getText();
+
+            String tel1 = telparent.getText();
+
+            ClasseEtude classe = ClasseDetude.getValue();
+
+            patient.setadress(adresse1);
+
+            patient.setlieu(Lieu1);
+
+            Enfant enfant = new Enfant(patient, classe, tel1);
+
+            doss1 = new Dossier(enfant);
+
+
+
+
+        }
+
+
+
+
+        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+
+        if (loggedInOrthophonist.isPatient(patient)) {
+
+            patient_page.setVisible(true);
+
+            patient_form.setVisible(false);
+
+            dash_form.setVisible(false);
+
+            patients_form.setVisible(false);
+
+            app_form.setVisible(false);
+
+            System.out.println("siiiiiii");
+
+
+
+
+        } else {
+
+            System.out.println("hereeeee");
+
+            loggedInOrthophonist.addPatient(doss1);
+
+
+
+
+        }
+
+        management.sauvegarderUtilisateurs();
+
+        showPatientData();
+
+
+
+
+    }
+
+    private Anam currentAnam= new Anam();
+    private Map<String, QuestionA> questionMap;
+    private Boinitial boin=new Boinitial(currentAnam, LocalDate.now());
+    private Bo currentBo=new Bo(LocalDate.now());
+
+
+    @FXML
+    public void Add_bo(ActionEvent event ){
+        bo_init.setVisible(true);
+        maine.setVisible(false);
+        if (doss1.getBo().isEmpty()){
+            System.out.println("emptyyyyyyyyyyy");
+            if (doss1.getpatient().isAdulte(doss1.getpatient().getDatenes())){
+            currentAnam.initializeAdultAnam(); // or initializeAdultAnam based on context
+        }
+            else{
+            currentAnam.initializeChildAnam(); // or initializeAdultAnam based on context
+        }
+            questionMap = new HashMap<>();
+            for (Cat_Quest category : Cat_Quest.values()) {
+                for (QuestionA question : currentAnam.getQuestionsForCategory(category)) {
+                    questionMap.put(question.getQuestion(), question);
+                }
+            }
+    
+            ObservableList<String> questions = FXCollections.observableArrayList(questionMap.keySet());
+            questionListView.setItems(questions);
+    
+            questionListView.setOnMouseClicked(mouseEvent -> handleQuestionSelection(mouseEvent));
+        }
+
+        else {
+            System.out.println("fiiiiiiiiiiiiiiiiih");
+
+        }
+        
+
+    }
+
+
+
+    @FXML
+    private void handleQuestionSelection(MouseEvent mouseEvent) {
+        String selectedQuestion = questionListView.getSelectionModel().getSelectedItem();
+        if (selectedQuestion != null) {
+            QuestionA question = questionMap.get(selectedQuestion);
+            answerTextField.setText(question.getReponse());
+            System.out.println("ssssssssss");
+            updateQuestionInAnamnese(question);
+
+        }
+    }
+
+    @FXML
+    private void handleSubmitAnswer() {
+        doss1.ajouterBo(boin);
+        System.out.println("addeeeeeed");
+        bo_init.setVisible(false);
+        maine.setVisible(true);
+        if (doss1.getBo().isEmpty()){
+            System.out.println("Always empty");
+        }
+        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+
+        loggedInOrthophonist.updateDossier(doss1);
+        management.sauvegarderUtilisateurs();
+
+
+
+
+
+    }
+
+    private void updateQuestionInAnamnese(QuestionA updatedQuestion) {
+        for (Map.Entry<Cat_Quest, List<QuestionA>> entry : currentAnam.getMap().entrySet()) {
+            List<QuestionA> questions = entry.getValue();
+            for (QuestionA question : questions) {
+                if (question.equals(updatedQuestion)) {
+                    question.setReponse(updatedQuestion.getReponse());
+                    // Optionally, you can break out of the loop if you expect only one occurrence of the question
+                    // break;
                 }
             }
         }
     }
 
-    public void switchFormTypeRendezv(ActionEvent event) {
 
-        if (event.getSource() == type_app) {
-            if (type_app.getValue() == "Consultation") {
-                consultation.setVisible(true);
-                suivi.setVisible(false);
-                atelier.setVisible(false);
-            } else if (type_app.getValue() == "Suivi") {
-                consultation.setVisible(false);
-                suivi.setVisible(true);
-                atelier.setVisible(false);
-            } else if (type_app.getValue() == "atelier") {
-                consultation.setVisible(false);
-                suivi.setVisible(false);
-                atelier.setVisible(true);
-            }
-        }
-    }
 
-    public void displayName() {
-        String name = Data.name;
-        nav_name.setText(name);
-    }
 
-    public void addPatient(ActionEvent event) {
-        patient_form.setVisible(true);
-        extra_infoA.setVisible(false);
-        extra_infoY.setVisible(false);
-    }
+   
 
-    public void showPatientData() {
-        patient_id.setCellValueFactory(cellData -> {
-            Double numero = cellData.getValue().getNum();
-            return new SimpleDoubleProperty(numero).asObject();
-        });
-        // String doubleString = Double.toString(doss1.getNum());
-
-        patient_fname.setCellValueFactory(
-                cellData -> new SimpleStringProperty(cellData.getValue().getpatient().getprenom()));
-        patient_lname
-                .setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getpatient().getnom()));
-
-        // Create an observable list for the dossiers
-        dossierList = FXCollections.observableArrayList();
-        patientstab.setItems(dossierList);
-        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
-
-        dossierList.clear(); // Clear existing data
-        dossierList.addAll(loggedInOrthophonist.getPatients().values()); // Add new data
-    }
-
-    public void showDossierData() {
-        f.setText(doss1.getpatient().getnom() + " " + doss1.getpatient().getprenom());
-        a.setText(doss1.getpatient().getadress());
-        l.setText(doss1.getpatient().getlieu());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        String dateString = doss1.getpatient().getdate().format(formatter);
-        b.setText(dateString);
-        int age = doss1.getpatient().getAge(doss1.getpatient().getdate());
-        String y = Integer.toString(age);
-        System.out.println(y);
-        agepatient.setText(y);
-
-    }
-
-    private Patient patient;
-    Dossier doss1;
-
-    public void submission(ActionEvent event) {
-        String nom = patient_nom.getText();
-        String prenom = patient_prenom.getText();
-        LocalDate year = AGE.getValue();
-        String text = numdos.getText();
-        double id = Double.parseDouble(text);
-
-        ClasseDetude.getItems().setAll(ClasseEtude.values());
-
-        patient = new Patient(nom, prenom, year);
-        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
-
-        if (loggedInOrthophonist.isPatient(patient)) {
-            patient_page.setVisible(true);
-            patient_form.setVisible(false);
-            dash_form.setVisible(false);
-            patients_form.setVisible(false);
-            app_form.setVisible(false);
-            patient_page.setVisible(true);
-            doss1 = loggedInOrthophonist.getPatient(id);
-            showDossierData();
-
-            System.out.println("siiiiiii");
-
-        } else {
-            System.out.println("hereeeee");
-            if (patient.isAdulte(year)) {
-                System.out.println("adulte");
-                extra_infoY.setVisible(false);
-                extra_infoA.setVisible(true);
-            } else {
-                System.out.println("young");
-                extra_infoY.setVisible(true);
-                extra_infoA.setVisible(false);
-            }
-
-        }
-
-    }
-
-    public void done(ActionEvent event) {
-
-        if (patient.getAdulte()) {
-            String Lieu = lieu.getText();
-            String adresse = adress.getText();
-            String proffession = profession.getText();
-            String telephone = tel.getText();
-            String diplom = diplome.getText();
-            patient.setadress(adresse);
-            patient.setlieu(Lieu);
-            Adulte adulte = new Adulte(patient, diplom, proffession, telephone);
-            doss1 = new Dossier(adulte);
-
-        } else {
-            String Lieu1 = lieu1.getText();
-            String adresse1 = adress1.getText();
-            String tel1 = telparent.getText();
-            ClasseEtude classe = ClasseDetude.getValue();
-            patient.setadress(adresse1);
-            patient.setlieu(Lieu1);
-            Enfant enfant = new Enfant(patient, classe, tel1);
-            doss1 = new Dossier(enfant);
-
-        }
-
-        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
-        if (loggedInOrthophonist.isPatient(patient)) {
-            patient_page.setVisible(true);
-            patient_form.setVisible(false);
-            dash_form.setVisible(false);
-            patients_form.setVisible(false);
-            app_form.setVisible(false);
-            System.out.println("siiiiiii");
-
-        } else {
-            System.out.println("hereeeee");
-            loggedInOrthophonist.addPatient(doss1);
-
-        }
-        management.sauvegarderUtilisateurs();
-        showPatientData();
-
-    }
-
-    public void Add_bo(ActionEvent event ){
-        bo_init.setVisible(true);
-        maine.setVisible(false);
-    }
    
 
 

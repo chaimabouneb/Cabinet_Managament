@@ -1,59 +1,23 @@
 package cabinet_management;
 
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 
-public class Boinitial extends Bo {
-    private HashSet<Libre> questions;
-    private Patient p;
-    private Anam anam;
+public class Boinitial extends Bo implements Serializable{
+    
+    private Anam anam=new Anam();
 
-    public void Boinitial() {
+    public Boinitial(Anam a , LocalDate d) {
+        super(d);
+        this.anam=a;
     };
-
-    public void Boinitial(HashSet<Libre> questions, Patient p) {
-        this.questions = questions;
-        this.p = p;
-    };
-
-    public Boinitial(boolean estEnfant) {
-        this.anam = new Anam();
-
-        if (estEnfant) {
-            initialiserAnamEnfant();
-        } else {
-            initialiserAnamAdulte();
-        }
-    }
-
-    public boolean isEnfant() {
-        if (p.getClass().getName() == "Enfant") {
-            return true;
-        } else {
-            return false;
-        }
-
-    }
-
-    public HashSet<Libre> getQuest() {
-        if (isEnfant()) {
-            return questions;
-        } else {
-            return null;
-        }
-    }
-
-    private void initialiserAnamAdulte() {
-        // Initialiser les questions de l'anamnèse pour un adulte
-        
-    }
-
-    private void initialiserAnamEnfant() {
-        // Initialiser les questions de l'anamnèse pour un enfant
-       
-    }
 
     public Anam getAnam() {
         return anam;
+    }
+    public void setAnam(Anam a){
+        this.anam=a;
     }
 }

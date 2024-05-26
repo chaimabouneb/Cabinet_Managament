@@ -1,6 +1,8 @@
 package cabinet_management;
 
-public class QuestionA {
+import java.io.Serializable;
+
+public class QuestionA  implements Serializable{
 
         private String question;
         private String reponse;

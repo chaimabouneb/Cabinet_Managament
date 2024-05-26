@@ -1,13 +1,12 @@
 package cabinet_management;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import cabinet_management.Cat_Quest;
-
-public class Anam {
+public class Anam implements Serializable {
 
     private Map<Cat_Quest, List<QuestionA>> questions = new HashMap<>();
 
@@ -17,6 +16,10 @@ public class Anam {
         }
     }
 
+    public Map<Cat_Quest, List<QuestionA>> getMap(){
+        return questions;
+    }
+
     public void ajouterQuestion(Cat_Quest categorie, QuestionA question) {
         List<QuestionA> questionList = questions.get(categorie);
         if (questionList != null) {
@@ -24,51 +27,29 @@ public class Anam {
         }
     }
 
-
     public List<QuestionA> getQuestions(Cat_Quest categorie) {
         return questions.get(categorie);
     }
 
-    private void initializeChildAnam() {
-        List<QuestionA> childQuestions = new ArrayList<>();
-        // Structure familiale
-        childQuestions.add(new QuestionA("Quelle est la composition de la famille de l'enfant ?"));
-        childQuestions.add(new QuestionA("Y a-t-il des frères et sœurs dans la famille ?"));
-        // Ajoutez les autres questions de la catégorie Structure familiale
-
-        // Dynamique familiale
-        childQuestions.add(new QuestionA("Comment se déroulent les interactions entre les membres de la famille ?"));
-        childQuestions.add(new QuestionA("Quels sont les rituels familiaux auxquels l'enfant participe ?"));
-        // Ajoutez les autres questions de la catégorie Dynamique familiale
-
-        // Ajoutez les autres catégories avec leurs questions
-
-        questions.put(Cat_Quest.STRUCTURE_FAMILIALE, childQuestions);
-        // Ajoutez les autres catégories avec leurs questions
+    public void initializeChildAnam() {
+        ajouterQuestion(Cat_Quest.STRUCTURE_FAMILIALE, new QuestionA("Quelle est la composition de la famille de l'enfant ?"));
+        ajouterQuestion(Cat_Quest.STRUCTURE_FAMILIALE, new QuestionA("Y a-t-il des frères et sœurs dans la famille ?"));
+        ajouterQuestion(Cat_Quest.DYNAMIQUE_FAMILIALE, new QuestionA("Comment se déroulent les interactions entre les membres de la famille ?"));
+        ajouterQuestion(Cat_Quest.DYNAMIQUE_FAMILIALE, new QuestionA("Quels sont les rituels familiaux auxquels l'enfant participe ?"));
+        // Add other questions similarly...
     }
 
-    private void initializeAdultAnam() {
-        List<QuestionA> adultQuestions = new ArrayList<>();
-        // Histoire de la maladie
-        adultQuestions.add(new QuestionA("Quels sont les symptômes principaux de la maladie du patient ?"));
-        adultQuestions.add(new QuestionA("Depuis quand les symptômes sont-ils apparus ?"));
-        // Ajoutez les autres questions de la catégorie Histoire de la maladie
-
-        // Suivi médical
-        adultQuestions.add(new QuestionA("Quels sont les antécédents médicaux du patient ?"));
-        adultQuestions.add(new QuestionA("Quelles sont les affections médicales dont le patient a été traité dans le passé ?"));
-        // Ajoutez les autres questions de la catégorie Suivi médical
-
-        // Ajoutez les autres catégories avec leurs questions
-
-        questions.put(Cat_Quest.HISTOIRE_MALADIE, adultQuestions);
-        // Ajoutez les autres catégories avec leurs questions
+    public void initializeAdultAnam() {
+        ajouterQuestion(Cat_Quest.HISTOIRE_MALADIE, new QuestionA("Quels sont les symptômes principaux de la maladie du patient ?"));
+        ajouterQuestion(Cat_Quest.HISTOIRE_MALADIE, new QuestionA("Depuis quand les symptômes sont-ils apparus ?"));
+        ajouterQuestion(Cat_Quest.SUIVI_MEDICAL, new QuestionA("Quels sont les antécédents médicaux du patient ?"));
+        ajouterQuestion(Cat_Quest.SUIVI_MEDICAL, new QuestionA("Quelles sont les affections médicales dont le patient a été traité dans le passé ?"));
+        // Add other questions similarly...
     }
 
     public List<QuestionA> getQuestionsForCategory(Cat_Quest category) {
         return questions.get(category);
     }
-
 }
 
 

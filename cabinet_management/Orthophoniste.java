@@ -25,6 +25,7 @@ public class Orthophoniste implements Serializable {
 
     // protected HashMap<Double, Dossier> patients =new HashMap<>() ;
     Double lastKey = 0.0;
+
     protected Set<Patient> patient = new TreeSet<>();
 
     protected TreeSet<RendezVous> rendezVousSet = new TreeSet<>();
@@ -193,6 +194,14 @@ public class Orthophoniste implements Serializable {
             System.out.println("not patient");
             return null;
         }
+    }
+
+    public void updateDossier(Dossier d){
+        if (exists(d.getNum())){
+            patients.put(d.getNum(), d);
+
+        }
+        
     }
 
 }

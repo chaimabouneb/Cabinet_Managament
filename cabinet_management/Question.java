@@ -3,7 +3,6 @@ package cabinet_management;
 import java.util.List;
 
 public abstract class Question {
-    private Cat_Quest type;
     private String enonce;
     protected List<String> options;
     protected int note;

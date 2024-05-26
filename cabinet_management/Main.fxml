@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -21,7 +22,10 @@
          <children>
             <AnchorPane fx:id="bo_init" prefHeight="600.0" prefWidth="1100.0">
                <children>
-                  <Label layoutX="100.0" layoutY="100.0" text="LES BOs" />
+                  <ListView fx:id="questionListView" layoutX="10.0" layoutY="10.0" onMouseClicked="#handleQuestionSelection" prefHeight="250.0" prefWidth="800.0" />
+                  <TextField fx:id="answerTextField" layoutX="20.0" layoutY="270.0" />
+                  <Button layoutX="300.0" layoutY="270.0" mnemonicParsing="false" onAction="#handleSubmitAnswer" text="submitt answer" />
+                  <Button layoutX="500.0" layoutY="580.0" mnemonicParsing="false" text="SAVE CHANGES" />
                </children>
             </AnchorPane>
             <BorderPane fx:id="maine" layoutX="93.0" layoutY="85.0" prefHeight="600.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
