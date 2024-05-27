@@ -13,9 +13,14 @@ public class Patient implements Comparable<Patient>, Serializable {
     private String adresse;
     private LocalDate datenes;
     private String lieunes;
-
     private boolean admet = false;
     private String Gender;
+    private int age;
+    private Double n;
+
+    public Patient(Double nn) {
+        this.n = nn;
+    }
 
     // Constructeur principal
     public Patient(String n) {
@@ -23,6 +28,14 @@ public class Patient implements Comparable<Patient>, Serializable {
     }
 
     public Patient() {
+
+    }
+
+    public Patient(String n, int a, String g, String lieunes) {
+        this.nom = n;
+        this.Gender = g;
+        this.age = a;
+        this.lieunes = lieunes;
 
     }
 
@@ -46,6 +59,22 @@ public class Patient implements Comparable<Patient>, Serializable {
 
     public String getNom() {
         return nom;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int a) {
+        this.age = a;
+    }
+
+    public Double getN() {
+        return n;
+    }
+
+    public void setn(Double n) {
+        this.n = n;
     }
 
     public String getPrenom() {
@@ -147,6 +176,14 @@ public class Patient implements Comparable<Patient>, Serializable {
 
     public String getlieu() {
         return lieunes;
+    }
+
+    public String getG() {
+        return Gender;
+    }
+
+    public void setG(String s) {
+        this.Gender = s;
     }
 
     public String getadress() {

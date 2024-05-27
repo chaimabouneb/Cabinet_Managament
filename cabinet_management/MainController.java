@@ -73,10 +73,20 @@ public class MainController implements Initializable {
     @FXML
     private TextField ageconsultation;
     @FXML
+    private Label infoadultenum;
+    @FXML
+    private Label infoadulteprof;
+    @FXML
+    private Label infoadultedip;
+    @FXML
     private Label numerofich;
 
     @FXML
     private Label datecrefiche;
+    @FXML
+    private Label infoenfantp1;
+    @FXML
+    private Label infoenfantp2;
 
     @FXML
     private TextField namatelier;
@@ -377,12 +387,10 @@ public class MainController implements Initializable {
         Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
         if (e.getSource() == save) {
             List<Objectif> regularList = new ArrayList<>(dataobj);
-            System.out.println(regularList);
-            System.out.println("ssssssssssssssssssssssss");
+
             Patient selectedPatient = patientstab.getSelectionModel().getSelectedItem();
             Double d = loggedInOrthophonist.getPP().get(selectedPatient.getNom());
-            System.out.println("zzzzzzzzzzzzzzzzzzzz");
-            System.out.println(d);
+
             Dossier ddi = loggedInOrthophonist.getPatient(d);
             if (ddi.getFiche() == null || ddi.getFiche().isEmpty()) {
                 System.out.println("love");
@@ -538,13 +546,15 @@ public class MainController implements Initializable {
                                 (String) gender_Consultation.getValue(),
                                 namecon.getText(),
                                 date.getValue(), localTime);
-                        System.out.println(c.getAge());
 
                         if (p != null) {
                             System.out.println("const patient exist");
                             loggedInOrthophonist.ajouterc(c);
                             if (p.isAdmet()) {
                                 Dossier d = loggedInOrthophonist.chercheDossier(p.getNom());
+                                // loggedInOrthophonist.getp
+                                p.setn(d.getNum());
+                                loggedInOrthophonist.addP(p);
                                 d.addRendezVous(c.getDate(), c);
                             }
                         } else {
@@ -552,12 +562,17 @@ public class MainController implements Initializable {
                             if (Integer.parseInt(ageconsultation.getText()) >= 19) {
                                 System.out.println("oui");
 
-                                p = new Adulte(namecon.getText());
+                                p = new Adulte(namecon.getText(), Integer.parseInt(ageconsultation.getText()),
+                                        (String) gender_Consultation.getValue(), "Diplome", "prof", "num", "lieuness");
+
                                 loggedInOrthophonist.addP(p);
+
                                 loggedInOrthophonist.ajouterc(c);
 
                             } else {
-                                p = new Enfant(namecon.getText());
+                                p = new Enfant(namecon.getText(), Integer.parseInt(ageconsultation.getText()),
+                                        (String) gender_Consultation.getValue(), "num1", "classeetude", "num2",
+                                        "lieuness");
                                 loggedInOrthophonist.addP(p);
                                 loggedInOrthophonist.ajouterc(c);
                                 System.out.println("const enf dont exist but created");
@@ -588,10 +603,13 @@ public class MainController implements Initializable {
                             pp.setAdmet();
                             loggedInOrthophonist.addP(pp);// add to set patient
                             Dossier d = new Dossier(pp);
-                            System.out.println(d.getPatient().getNom());
+
                             d.addRendezVous(ss.getDate(), ss);
                             loggedInOrthophonist.addPatient(d);// add to set of dossier
-                            System.out.println(d.getNum());
+                            pp.setn(d.getNum());
+                            System.out.println("vvvvvvvvvvvvvvvvv");
+                            System.out.println(pp.getN());
+                            System.out.println("vvvvvvvvvvvvvvvvv");
                             loggedInOrthophonist.addPP(pp.getNom(), d.getNum());
                         }
 
@@ -691,6 +709,7 @@ public class MainController implements Initializable {
     }
 
     public void showAppData() {
+        
         ObservableList<RendezVous> appointmentListData = appointmentGetData();
         tableConsultaion.setItems(appointmentListData);
         tableAtelier.setItems(appointmentListData);
@@ -699,10 +718,10 @@ public class MainController implements Initializable {
 
         // Set up the nameSuivitab and enligneSuivitab columns for Suivi appointments
         namesuivitab.setCellValueFactory(new PropertyValueFactory<>("nom"));
-        // eopsuivitab.setCellValueFactory(new PropertyValueFactory<>("e"));
-        // numdossiersuivitab.setCellValueFactory(new
-        // PropertyValueFactory<>("numerodossier"));
-
+        eopsuivitab.setCellValueFactory(new PropertyValueFactory<>("e"));
+        numdossiersuivitab.setCellValueFactory(new PropertyValueFactory<>("n"));
+        datesuivitab.setCellValueFactory(new PropertyValueFactory<>("date"));
+        durationsuivitab.setCellValueFactory(new PropertyValueFactory<>("duree"));
         // Set up other columns similarly, assuming these methods exist in RendezVous
         namecontab.setCellValueFactory(new PropertyValueFactory<>("nom"));
         agecontab.setCellValueFactory(new PropertyValueFactory<>("age"));
@@ -910,6 +929,7 @@ public class MainController implements Initializable {
     Management m = new Management();
 
     public void showAppDatainit() {
+        management.sauvegarderUtilisateurs();
         ObservableList<RendezVous> listDatat = FXCollections.observableArrayList();
         ObservableList<RendezVous> listDatacons = FXCollections.observableArrayList();
         ObservableList<RendezVous> listData = FXCollections.observableArrayList();
@@ -951,7 +971,11 @@ public class MainController implements Initializable {
             System.out.println(patient);
             listPat.addAll(patient);
             patientstab.setItems(listPat);
+            System.out.println();
             patient_fname.setCellValueFactory(new PropertyValueFactory<>("nom"));
+            patient_id.setCellValueFactory(new PropertyValueFactory<>("n"));
+            patient_gender.setCellValueFactory(new PropertyValueFactory<>("age"));
+            // patient_age.setCellValueFactory(new PropertyValueFactory<>("age"));
 
         }
         //
@@ -979,17 +1003,28 @@ public class MainController implements Initializable {
             patients_form.setVisible(false);
             patient_page.setVisible(true);
             f.setText(selectedPatient.getNom());
+            l.setText(selectedPatient.getLieunes());
+            agepatient.setText(String.valueOf(selectedPatient.getAge()));
             System.out.println(selectedPatient.getClass().getName());
-
+            // b.setText(selectedPatient.get());
             // agepatient.setText(toString(selectedPatient.getAge()));
             if (selectedPatient.getClass().getName() == "cabinet_management.Adulte") {
-                System.out.println("aaaaaaaaaaaaaaa");
+
                 adult_info.setVisible(true);
                 enfant_info.setVisible(false);
+                Adulte e = ((Adulte) selectedPatient);
+                infoadulteprof.setText(e.getProfession());
+                infoadultedip.setText(e.getDiplome());
+                infoadultenum.setText(e.getNum());
+                // l.setText(selectedPatient.getLieunes());
 
             } else {
                 adult_info.setVisible(false);
                 enfant_info.setVisible(true);
+                Enfant e = ((Enfant) selectedPatient);
+                infoenfantp1.setText(e.getNum1());
+                infoenfantp2.setText(e.getNum2());
+
             }
             Double d = loggedInOrthophonist.getPP().get(selectedPatient.getNom());
 

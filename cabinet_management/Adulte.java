@@ -13,6 +13,18 @@ public class Adulte extends Patient implements Serializable {
         super(n);
     }
 
+    public Adulte(Double n) {
+        super(n);
+    }
+
+    public Adulte(String n, int a, String g, String diplome, String profession, String num, String lieunes) {
+        super(n, a, g, lieunes);
+
+        this.diplome = diplome;
+        this.num = num;
+        this.profession = profession;
+    }
+
     public Adulte(Patient patient, String d, String pr, String n) {
         super(patient.getnom(), patient.getprenom(), patient.getdate(), patient.getadress(), patient.getlieu());
         this.diplome = d;

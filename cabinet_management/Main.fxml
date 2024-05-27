@@ -66,7 +66,7 @@
                               <AnchorPane layoutX="18.0" layoutY="230.0" prefHeight="302.0" prefWidth="892.0" style="-fx-background-color: beige;" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="app_form" prefHeight="555.0" prefWidth="897.0" visible="false">
+                        <AnchorPane fx:id="app_form" prefHeight="555.0" prefWidth="897.0">
                            <children>
                               <AnchorPane layoutX="-9.0" layoutY="282.0" prefHeight="235.0" prefWidth="892.0">
                                  <children>
@@ -128,6 +128,7 @@
                                              </columns>
                                           </TableView>
                                           <TextField fx:id="namatelier" layoutX="483.0" layoutY="465.0" promptText="nom" />
+                                          <Label layoutX="792.0" layoutY="271.0" prefHeight="17.0" prefWidth="53.0" text="num1" />
                                        </children>
                                     </AnchorPane>
                                     <ComboBox fx:id="type_app" layoutX="22.0" layoutY="61.0" onAction="#switchFormTypeRendezv" prefWidth="150.0" />
@@ -186,8 +187,8 @@
                                     </AnchorPane>
                                     <TableView fx:id="patientstab" layoutX="6.0" layoutY="102.0" prefHeight="300.0" prefWidth="886.0">
                                       <columns>
-                                        <TableColumn fx:id="patient_fname" prefWidth="209.33328247070312" text="first Name" />
-                                        <TableColumn fx:id="patient_lname" prefWidth="209.33328247070312" text="last Name" />
+                                        <TableColumn fx:id="patient_fname" prefWidth="209.33328247070312" text="Full Name" />
+                                        <TableColumn fx:id="patient_age" prefWidth="209.33328247070312" text="Age" />
                                         <TableColumn fx:id="patient_id" prefWidth="236.00006103515625" text="File ID" />
 
                                           <TableColumn fx:id="patient_gender" prefWidth="133.99996948242188" text="Gender" />
