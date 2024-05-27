@@ -1,7 +1,5 @@
 package cabinet_management;
 
-import javafx.scene.input.MouseEvent;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -417,17 +415,20 @@ public class MainController implements Initializable {
     @FXML
     private TableView<Test> testTable;
 
-    @FXML
-    private TableColumn<Test, String> testNameColumn;
+    
 
     @FXML
-    private TableColumn<Test, Integer> testScoreColumn;
+    private TableColumn<Test, String> nomColumn;
 
     @FXML
-    private TableColumn<Test, String> testConclusionColumn;
+    private TableColumn<Test, Double> scoreColumn;
 
     @FXML
-    private TextField projetTherapeutiqueField;
+    private TableColumn<Test, String> conclusionColumn;
+
+
+    @FXML
+    private TextArea projetTherapeutiqueField;
 
     @FXML
     private TextArea troublesArea;
@@ -972,7 +973,7 @@ public class MainController implements Initializable {
 
         }
 
-    }
+    
 
 
 
@@ -1223,6 +1224,9 @@ public class MainController implements Initializable {
      * }
      */
 
+
+
+
     Management m = new Management();
 
     public void showAppDatainit() {
@@ -1341,6 +1345,8 @@ public class MainController implements Initializable {
                         onRowSelectt();
                     }
                 });
+                initialize3();
+
                 // Set the ObservableList to the TableView
 
                 /*
@@ -1383,6 +1389,7 @@ public class MainController implements Initializable {
     }
 
     public void onRowSelectt() {
+
         FicheSuivi selectedFicheSuivi = tabfichepatpage.getSelectionModel().getSelectedItem();
         fiche_form.setVisible(true);
         patient_page.setVisible(false);
@@ -1454,6 +1461,385 @@ public class MainController implements Initializable {
             }
         }
     }
+
+
+    private Anam currentAnam= new Anam();
+    private Map<String, QuestionA> questionMap;
+    private Boinitial boin=new Boinitial(currentAnam, LocalDate.now());
+    private Bo currentBo=new Bo(LocalDate.now());
+    private Trouble trouble;
+    private String projet;
+    private String conclusion;
+    private TestSimple questionnaire;
+
+    Question reponseLibre4 = new ReponseLibre("Qu'ffffest-ce que la gravité ?", "Force qui attire les objets vers le centre de la Terre");
+
+
+    private Map<Question, Integer> questionScores = new HashMap<>();
+
+    private Question selectedQuestion;
+
+
+    @FXML
+    public void Enregistrer_Bo(ActionEvent event){
+        currentBo.ajouterTrouble(trouble);
+        currentBo.setProjetTherapeutique(projet);
+
+        conclusion = Conclusion_test.getText();
+
+        questionnaire.setConclusion(conclusion);
+
+        //questionnaire.ajouterQuestion(reponseLibre4);
+
+
+        currentBo.ajouterEpreuve(questionnaire);
+        ddi.ajouterBo(currentBo);
+
+        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+        loggedInOrthophonist.updateDossier(ddi);
+        management.sauvegarderUtilisateurs();
+        BO.setVisible(false);
+        maine.setVisible(true);
+        loggedInOrthophonist.updateDossier(ddi);
+        initialize3();
+        System.out.println("doOOOOOOOOOOOe");
+    }
+
+
+
+
+    @FXML
+    public void Add_bo(ActionEvent event ){
+        boTableView.getItems().clear();
+
+        maine.setVisible(false);
+        BO.setVisible(false);
+        bo_init.setVisible(false);
+        initialize2();
+        if (ddi.getBo().isEmpty()){
+            bo_init.setVisible(true);
+            System.out.println("emptyyyyyyyyyyy");
+            if (ddi.getpatient() instanceof Adulte){
+            currentAnam.initializeAdultAnam(); // or initializeAdultAnam based on context
+        }
+            else{
+            currentAnam.initializeChildAnam(); // or initializeAdultAnam based on context
+        }
+            questionMap = new HashMap<>();
+            for (Cat_Quest category : Cat_Quest.values()) {
+                for (QuestionA question : currentAnam.getQuestionsForCategory(category)) {
+                    questionMap.put(question.getQuestion(), question);
+                }
+            }
+    
+            ObservableList<String> questions = FXCollections.observableArrayList(questionMap.keySet());
+            questionListView.setItems(questions);
+    
+            questionListView.setOnMouseClicked(mouseEvent -> handleQuestionSelection(mouseEvent));
+        }
+
+        else {
+            BO.setVisible(true);
+            ajouterQuest.setVisible(false);
+            ajouterExo.setVisible(false);
+            nom_quest.setVisible(false);
+            okk.setVisible(false);
+
+            System.out.println("fiiiiiiiiiiiiiiiiih");
+
+        }
+        
+
+    }
+
+    public void add_epreuve(){
+        ajouterQuest.setVisible(true);
+        ajouterExo.setVisible(true);
+        nom_quest.setVisible(false);
+
+    }
+
+    public void new_quest(){
+        nom_quest.setVisible(true);
+        okk.setVisible(true);
+    }
+    
+    @FXML
+    public void ok_nom(){
+        String testName = nom_quest.getText();
+
+        questionnaire=new TestSimple(testName);
+        questionnaire.initialiserTest();
+        System.out.println("bieeeeen");
+        displayTest();
+        initialize();
+        questionScores.clear();
+        totalScoreLabel.setText("Total Score: 0");
+
+    }
+
+
+    private void displayTest() {
+        form.getItems().clear();
+        for (Question question : questionnaire.getQuestions()) {
+            TextFlow questionFlow = new TextFlow();
+
+            Text questionText = new Text(question.getEnonce() + "\n");
+            questionFlow.getChildren().add(questionText);
+
+            if (question instanceof QCU) {
+                QCU qcu = (QCU) question;
+                for (String proposition : qcu.getPropositions()) {
+                    Text choiceText = new Text(proposition);
+                    if (proposition.equals(qcu.getBonneReponse())) {
+                        choiceText.setStyle("-fx-font-weight: bold");
+                    }
+                    questionFlow.getChildren().add(new Text("\n - "));
+                    questionFlow.getChildren().add(choiceText);
+                }
+            } else if (question instanceof QCM) {
+                QCM qcm = (QCM) question;
+                for (String proposition : qcm.getPropositions()) {
+                    Text choiceText = new Text(proposition);
+                    if (qcm.getBonnesReponses().contains(proposition)) {
+                        choiceText.setStyle("-fx-font-weight: bold");
+                    }
+                    questionFlow.getChildren().add(new Text("\n - "));
+                    questionFlow.getChildren().add(choiceText);
+                }
+            } else if (question instanceof ReponseLibre) {
+                ReponseLibre rl = (ReponseLibre) question;
+                Text answerText = new Text("\n Réponse: " + rl.getBonneReponse());
+                answerText.setStyle("-fx-font-weight: bold");
+                questionFlow.getChildren().add(answerText);
+            }
+
+            form.getItems().add(questionFlow);
+
+
+        }
+    }
+
+
+    @FXML
+    public void initialize() {
+        scoreComboBox.getItems().addAll(1, 2, 3,4,5,6,7,8,9,10);
+        form.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                int index = form.getSelectionModel().getSelectedIndex();
+                selectedQuestion = questionnaire.getQuestions().toArray(new Question[0])[index];
+            }
+        });
+
+
+    }
+
+    @FXML
+    public void initialize2() {
+        // Initialize the ComboBox with CategorieTrouble values
+        categorieComboBox.setItems(FXCollections.observableArrayList(CategorieTrouble.values()));
+        System.out.println("iissssss theeers");
+
+        
+    }
+
+    @FXML
+    public void handleSubmitScore() {
+        if (selectedQuestion != null && scoreComboBox.getValue() != null) {
+            selectedQuestion.setScore(scoreComboBox.getValue());
+            updateTotalScore();
+        }
+    }
+
+    private void updateTotalScore() {
+        questionnaire.Calc_Score();
+        totalScoreLabel.setText("Total Score: " + questionnaire.getScore());
+    }
+
+    @FXML
+    private void handleAddTrouble() {
+        String nom = troubleNameField.getText();
+        CategorieTrouble categorie = categorieComboBox.getValue();
+        System.out.println("whyyyyy");
+        trouble = new Trouble(nom, categorie);
+ 
+    }
+
+    @FXML
+    private void handleSubmitProjet() {
+        projet = projetNameField.getText();
+        System.out.println("donNNNNNNNNNe");
+
+    }
+
+
+
+
+    @FXML
+    private void handleQuestionSelection(MouseEvent mouseEvent) {
+        String selectedQuestion = questionListView.getSelectionModel().getSelectedItem();
+        if (selectedQuestion != null) {
+            QuestionA question = questionMap.get(selectedQuestion);
+            answerTextField.setText(question.getReponse());
+            System.out.println("ssssssssss");
+            updateQuestionInAnamnese(question);
+
+        }
+    }
+
+    
+    @FXML
+    private void handleSubmitAnswer() {
+        ddi.ajouterBo(boin);
+        System.out.println("addeeeeeed");
+        bo_init.setVisible(false);
+        maine.setVisible(true);
+        if (ddi.getBo().isEmpty()){
+            System.out.println("Always empty");
+        }
+        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+
+        loggedInOrthophonist.updateDossier(ddi);
+        management.sauvegarderUtilisateurs();
+
+
+
+
+
+    }
+
+    private void updateQuestionInAnamnese(QuestionA updatedQuestion) {
+        for (Map.Entry<Cat_Quest, List<QuestionA>> entry : currentAnam.getMap().entrySet()) {
+            List<QuestionA> questions = entry.getValue();
+            for (QuestionA question : questions) {
+                if (question.equals(updatedQuestion)) {
+                    question.setReponse(updatedQuestion.getReponse());
+                    // Optionally, you can break out of the loop if you expect only one occurrence of the question
+                    // break;
+                }
+            }
+        }
+    }
+
+
+    @FXML
+    private void handleBoTableClicked(MouseEvent event) {
+        System.out.println("here we go again");
+
+        Bo selectedBo = boTableView.getSelectionModel().getSelectedItem();
+        System.out.println("here we go again");
+
+        if (selectedBo != null) {
+            // Affichez le Bo complet dans un autre TableView ou TextArea
+            displayFullBo(selectedBo);
+
+            System.out.println("here we go again");
+
+        }
+        else {
+            System.out.println("here we gGGGGGGGGo again");
+        }
+    
+
+}
+
+private void displayFullBo(Bo bo) {
+    affichage_Bo.setVisible(true);
+    maine.setVisible(false);
+    initialize4();
+    setBoo(bo);
+    
+    
+}
+
+
+public void initialize4() {
+    nomColumn.setCellValueFactory(new PropertyValueFactory<>("nom"));
+        scoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
+        conclusionColumn.setCellValueFactory(new PropertyValueFactory<>("conclusion"));
+}
+
+public void setBoo(Bo bo) {
+    testTable.getItems().setAll(bo.getEpreuvesCliniques());
+    
+    if (bo instanceof Boinitial) {
+        Boinitial boInitial = (Boinitial) bo;
+        //anamArea.setText(boInitial.getAnam().toString());
+       // anamArea.setVisible(true);
+    } else {
+
+        //anamArea.clear();
+        //anamArea.setVisible(false);
+        projetTherapeutiqueField.setText(bo.getProjetTherapeutique());
+        afficherTroubles(bo);
+        System.out.println("fff");
+        afficherTest(bo);
+        System.out.println("fff");
+
+
+    }
+}
+
+public void afficherTest(Bo selectedBo) {
+    if (selectedBo != null) {
+        ObservableList<Test> tests = FXCollections.observableArrayList(selectedBo.getEpreuvesCliniques());
+        testTable.setItems(tests);
+    } else {
+        testTable.getItems().clear();
+    }
+}
+
+public void afficherTroubles(Bo bo) {
+    if (bo != null) {
+        StringBuilder troublesText = new StringBuilder();
+        for (Trouble trouble1 : bo.getDiagnostic()) {
+            String t =trouble1.getCategorie().toString();
+            troublesText.append(t+" "+trouble1.getNom()).append("\n");
+        }
+        
+        String textt=troublesText.toString();
+        System.out.println(textt);
+        troublesArea.setText(textt);
+    } else {
+        troublesArea.setText("Aucun Bo sélectionné.");
+    }
+}
+
+@FXML
+public void Retour(){
+    affichage_Bo.setVisible(false);
+    maine.setVisible(true);
+}
+
+@FXML
+private void initialize3() {
+    boTableView.getColumns().clear();
+
+    if (boTableView == null) {
+        System.err.println("boTableView is null");
+        return;
+    }
+
+    if (ddi == null || ddi.getBo() == null) {
+        System.err.println("doss1 or doss1.getBo() is null");
+        return;
+    }
+
+    // Configure the TableView
+    TableColumn<Bo, LocalDate> creationDateColumn = new TableColumn<>("Date de Création");
+    creationDateColumn.setCellValueFactory(new PropertyValueFactory<>("crea"));
+    boTableView.getColumns().add(creationDateColumn);
+
+    // Add Bo objects to the TableView
+    Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+    for (Bo bo : ddi.getBo()) {
+        boTableView.getItems().add(bo);
+    }
+
+
+}
+
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

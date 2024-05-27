@@ -17,24 +17,18 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cabinet_management.MainController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/20.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cabinet_management.MainController">
    <children>
       <AnchorPane prefHeight="200.0" prefWidth="200.0">
          <children>
-            <AnchorPane fx:id="affichage_Bo" prefHeight="500.0" prefWidth="1000.0">
+            <AnchorPane fx:id="bo_init" prefHeight="600.0" prefWidth="1100.0" visible="false">
                <children>
-                  <TableView fx:id="testTable" prefHeight="200.0" prefWidth="200.0">
-                    <columns>
-                      <TableColumn prefWidth="75.0" text="C1" />
-                      <TableColumn prefWidth="75.0" text="C2" />
-                    </columns>
-                  </TableView>
-                  <TextField fx:id="projetTherapeutiqueField" layoutX="400.0" />
-                  <TextArea fx:id="anamArea" layoutX="300.0" layoutY="300.0" prefHeight="200.0" prefWidth="200.0" />
-                  <TextArea fx:id="troublesArea" layoutY="200.0" prefHeight="200.0" prefWidth="200.0" />
+                  <ListView fx:id="questionListView" layoutX="10.0" layoutY="10.0" onMouseClicked="#handleQuestionSelection" prefHeight="250.0" prefWidth="800.0" />
+                  <TextField fx:id="answerTextField" layoutX="20.0" layoutY="270.0" />
+                  <Button layoutX="300.0" layoutY="270.0" mnemonicParsing="false" onAction="#handleSubmitAnswer" text="submitt answer" />
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="BO" layoutX="10.0" layoutY="10.0" prefHeight="600.0" prefWidth="1100.0">
+            <AnchorPane fx:id="BO" prefHeight="600.0" prefWidth="1100.0" visible="false">
                <children>
                   <TextArea fx:id="Conclusion_test" layoutX="840.0" layoutY="40.0" prefHeight="250.0" prefWidth="200.0" promptText="conclusion test" />
                   <Button layoutX="750.0" layoutY="520.0" mnemonicParsing="false" onAction="#Enregistrer_Bo" text="SAVE ALL CHANGES" textFill="#3b9444" />
@@ -68,16 +62,39 @@
                   <Label fx:id="totalScoreLabel" layoutX="350.0" layoutY="320.0" text="SCORE">
                      <font>
                         <Font size="16.0" />
-                     </font></Label>
+                     </font>
+                  </Label>
                   <TextField />
                   <TextField />
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="bo_init" prefHeight="600.0" prefWidth="1100.0">
+            <AnchorPane fx:id="affichage_Bo" prefHeight="600.0" prefWidth="1100.0" visible="false" AnchorPane.leftAnchor="0.0">
                <children>
-                  <ListView fx:id="questionListView" layoutX="10.0" layoutY="10.0" onMouseClicked="#handleQuestionSelection" prefHeight="250.0" prefWidth="800.0" />
-                  <TextField fx:id="answerTextField" layoutX="20.0" layoutY="270.0" />
-                  <Button layoutX="300.0" layoutY="270.0" mnemonicParsing="false" onAction="#handleSubmitAnswer" text="submitt answer" />
+                  <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#Retour" text="RETOUR" />
+                  <Label layoutX="40.0" layoutY="40.0" text="Tableau de test questionnaire">
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                  </Label>
+                  <TableView fx:id="testTable" layoutX="50.0" layoutY="80.0" prefHeight="200.0" prefWidth="450.0">
+                     <columns>
+            <TableColumn fx:id="nomColumn" text="Nom" />
+            <TableColumn fx:id="scoreColumn" text="Score" />
+            <TableColumn fx:id="conclusionColumn" text="Conclusion" />
+        </columns>
+                  </TableView>
+                  <TextArea fx:id="troublesArea" layoutX="20.0" layoutY="380.0" prefHeight="200.0" prefWidth="300.0" />
+                  <TextArea fx:id="projetTherapeutiqueField" layoutX="390.0" layoutY="390.0" prefHeight="200.0" prefWidth="300.0" />
+                  <Label layoutX="50.0" layoutY="340.0" text="Liste des troubles">
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="390.0" layoutY="340.0" text="Projet therapeutique">
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                  </Label>
                </children>
             </AnchorPane>
             <BorderPane fx:id="maine" layoutX="93.0" layoutY="85.0" prefHeight="600.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -215,7 +232,6 @@
                                           <Font size="20.0" />
                                        </font>
                                     </Label>
-                                    <Button fx:id="addP_btn" layoutX="300.0" layoutY="50.0" mnemonicParsing="false" text="add patient" />
                                     <AnchorPane fx:id="patient_form" layoutX="6.0" layoutY="405.0" prefHeight="150.0" prefWidth="886.0">
                                        <children>
                                           <AnchorPane fx:id="extra_infoY" layoutX="180.0" prefHeight="150.0" prefWidth="700.0">
@@ -338,7 +354,7 @@
                                           <TableColumn prefWidth="94.0001220703125" text="date creation" />
                                        </columns>
                                     </TableView>
-                                    <Button fx:id="addBo" layoutX="29.0" layoutY="13.0" mnemonicParsing="false" onAction="#Add_bo" text="add" />
+                                    <Button layoutX="29.0" layoutY="13.0" mnemonicParsing="false" onAction="#Add_bo" text="add" />
                                  </children>
                               </AnchorPane>
                            </children>
