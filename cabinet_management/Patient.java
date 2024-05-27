@@ -22,6 +22,10 @@ public class Patient implements Comparable<Patient>, Serializable {
         this.nom = n;
     }
 
+    public Patient() {
+
+    }
+
     // Autres constructeurs pour initialiser différents champs
     public Patient(String nom, String prenom, String adresse, LocalDate datenes, String lieunes) {
         this.nom = nom;

@@ -1,6 +1,10 @@
 package cabinet_management;
 
+import javafx.scene.input.MouseEvent;
+
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -10,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.TreeSet;
 import javafx.beans.property.SimpleDoubleProperty;
 
@@ -54,19 +59,55 @@ public class MainController implements Initializable {
     private Button addapp;
 
     @FXML
-    private AnchorPane adult_info;
+    private Button addBtnObj;
 
     @FXML
+    private Button mod;
+
+    @FXML
+    private TextArea objarea;
+    @FXML
+    private Button addatelier;
+
+    @FXML
+    private Button deletatelier;
+    @FXML
+    private AnchorPane adult_info;
+    @FXML
+    private AnchorPane enfant_info;
+    @FXML
     private TextField ageconsultation;
+    @FXML
+    private Label numerofich;
+
+    @FXML
+    private Label datecrefiche;
+
+    @FXML
+    private TextField namatelier;
 
     @FXML
     private TableColumn<?, ?> agecontab;
 
     @FXML
+    private TableColumn<?, ?> colscore;
+
+    @FXML
     private Button app_btn;
+    @FXML
+    private Button addBtnScore;
+    @FXML
+    private TextField scoreText;
+    @FXML
+    private Button addsuivipatpage;
+    @FXML
+    private Button save;
 
     @FXML
     private AnchorPane app_form;
+
+    @FXML
+    private AnchorPane fiche_form;
 
     @FXML
     private AnchorPane atelier;
@@ -91,7 +132,7 @@ public class MainController implements Initializable {
 
     @FXML
     private TableColumn<?, ?> datesuivitab;
-
+    private Dossier ddi;
     @FXML
     private TableColumn<?, ?> duationcontab;
 
@@ -133,7 +174,7 @@ public class MainController implements Initializable {
     private TableColumn<?, ?> namecontab;
 
     @FXML
-    private TableColumn<?, ?> namesateliertab;
+    private TableColumn<Atelier, String> namesateliertab;
 
     @FXML
     private TextField namesuivi;
@@ -179,7 +220,34 @@ public class MainController implements Initializable {
     private TableView<RendezVous> tableAtelier;
 
     @FXML
+    private TableView<FicheSuivi> tabfichepatpage;
+
+    @FXML
+    private TableView<RendezVous> apppat;
+    @FXML
+    private CheckBox att;
+    @FXML
+    private TableView<Objectif> tablefiche;
+    @FXML
+    private TableColumn<?, ?> colobj;
+
+    @FXML
+    private TableColumn<?, ?> numfiche;
+    private ObservableList<Item> data;
+    private ObservableList<Objectif> dataobj;
+
+    @FXML
+    private TableView<Item> tabnomatelier;
+    @FXML
+    private TableColumn<Item, String> nametabatelier;
+    @FXML
     private TableView<RendezVous> patientstabb;
+
+    @FXML
+    private TableColumn<?, ?> patientstabbdate;
+
+    @FXML
+    private TableColumn<?, ?> patientstabbtype;
 
     @FXML
     private TableView<RendezVous> tableConsultaion;
@@ -237,7 +305,7 @@ public class MainController implements Initializable {
 
     @FXML
     private TextField adress1;
-
+    private HashMap<String, Dossier> patientFolders;
     @FXML
     private ComboBox<ClasseEtude> ClasseDetude;
 
@@ -248,10 +316,14 @@ public class MainController implements Initializable {
     @FXML
     private TableColumn<Dossier, String> patient_fname;
     @FXML
+    private TableColumn<?, ?> et;
+    @FXML
+    private TableColumn<?, ?> dt;
+    @FXML
     private TableColumn<Dossier, String> patient_age;
 
     @FXML
-    private TableView<Dossier> patientstab;
+    private TableView<Patient> patientstab;
 
     @FXML
     private Label a;
@@ -435,11 +507,103 @@ public class MainController implements Initializable {
 
 
 
-    public void checkSuivi() {
+    public void save(ActionEvent e) {
+        // FicheSuivi s = tabfichepatpage.getSelectionModel().getSelectedItem();
+        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+        if (e.getSource() == save) {
+            List<Objectif> regularList = new ArrayList<>(dataobj);
+            System.out.println(regularList);
+            System.out.println("ssssssssssssssssssssssss");
+            Patient selectedPatient = patientstab.getSelectionModel().getSelectedItem();
+            Double d = loggedInOrthophonist.getPP().get(selectedPatient.getNom());
+            System.out.println("zzzzzzzzzzzzzzzzzzzz");
+            System.out.println(d);
+            Dossier ddi = loggedInOrthophonist.getPatient(d);
+            if (ddi.getFiche() == null || ddi.getFiche().isEmpty()) {
+                System.out.println("love");
+                FicheSuivi ff = new FicheSuivi(regularList, LocalDate.now(), 1, att.isSelected());
 
+                loggedInOrthophonist.getPatient(d).addF(ff);
+                System.out.println(loggedInOrthophonist.getPatient(d).getFiche());
+                System.out.println("love");
 
+            } else {
+                /*
+                 * if (s != null) {
+                 * // Remove the existing FicheSuivi from the set
+                 * Set<FicheSuivi> fs = loggedInOrthophonist.getPatient(d).getFiche();
+                 * fs.remove(s);
+                 * 
+                 * // Update the Objectifs of the selected FicheSuivi
+                 * s.setO(regularList);
+                 * 
+                 * // Add the updated FicheSuivi back to the set
+                 * fs.add(s);
+                 * 
+                 * // Update the set of Fiches in the Dossier
+                 * loggedInOrthophonist.getPatient(d).setFiche(fs);
+                 * } else {
+                 */
+                FicheSuivi ff = new FicheSuivi(regularList, LocalDate.now(),
+                        loggedInOrthophonist.getPatient(d).getFiche().size() + 1, att.isSelected());
+                loggedInOrthophonist.getPatient(d).addF(ff);
+                System.out.println("eeeeeeeeeen");
+                System.out.println(loggedInOrthophonist.getPatient(d).getFiche());
+                System.out.println("eeeeeeeeeen");
 
+            }
+            // Assuming patient_page is Form2
+            fiche_form.setVisible(false);
+            patient_page.setVisible(true);
 
+            // saveOrthophoniste(loggedInOrthophonist);
+            management.sauvegarderUtilisateurs();
+            tablefiche.getItems().clear();
+            scoreText.clear();
+            objarea.clear();
+
+            // Refresh the table in form2
+            onRowSelect();
+
+        }
+    }
+
+    public void saveOrthophoniste(Orthophoniste orthophoniste) {
+        // Implement the logic to save the Orthophoniste object to your data storage
+        // mechanism
+        // For example, if using Java Object Serialization to save to a file:
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream("orthophoniste_data.ser"))) {
+            outputStream.writeObject(orthophoniste);
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle exceptions
+        }
+    }
+
+    public void switchFiche(ActionEvent e) {
+        if (e.getSource() == addsuivipatpage) {
+            fiche_form.setVisible(true);
+            patient_page.setVisible(false);
+            LocalDate currentDate = LocalDate.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String formattedDate = currentDate.format(formatter);
+            datecrefiche.setText(formattedDate);
+            System.out.println(ddi.getNum());
+            System.out.println("ooooooooooooooooooooooo");
+            if (ddi.getFiche() == null || ddi.getFiche().isEmpty()) {
+                numerofich.setText("01");
+            } else {
+                numerofich.setText(String.valueOf(ddi.getFiche().size()));
+            }
+            colobj.setCellValueFactory(new PropertyValueFactory<>("nom"));
+            colscore.setCellValueFactory(new PropertyValueFactory<>("note"));
+
+            // Initialize the data list
+            // dataobj = FXCollections.observableArrayList();
+
+            // Set the data list to the TableView
+
+        }
     }
 
 
@@ -469,8 +633,36 @@ public class MainController implements Initializable {
 
     }
 
+    public void AddAtelierBtn(ActionEvent e) {
+        if (e.getSource() == addatelier) {
 
+            AlertMessage a = new AlertMessage();
+            String name = namatelier.getText();
+            Item newItem = new Item(name);
+            data.add(newItem);
 
+            // Clear the TextField
+            namatelier.clear();
+
+        }
+
+    }
+
+    public void AddObjetctifBtn(ActionEvent e) {
+        if (e.getSource() == addBtnObj) {
+
+            AlertMessage a = new AlertMessage();
+            String name = objarea.getText();
+            // Item newItem = new Item(name);
+            Objectif newObjectif = new Objectif(name);
+            dataobj.add(newObjectif);
+
+            // Clear the TextField
+            objarea.clear();
+
+        }
+
+    }
 
     public void AddAppBtn(ActionEvent e) {
 
@@ -482,7 +674,7 @@ public class MainController implements Initializable {
 
 
             try {
-
+                patientFolders = new HashMap<>();
                 int houre = Integer.parseInt(hour.getText());
 
                 int minute = Integer.parseInt(min.getText());
@@ -502,10 +694,8 @@ public class MainController implements Initializable {
 
                 } else {
 
-                    Patient p = checkConsultation(namecon.getText());
-
                     if (type_app.getValue().equals("Consultation")) {
-
+                        Patient p = checkConsultation(namecon.getText());
                         System.out.println("1");
 
                         Consultation c = new Consultation(
@@ -524,12 +714,7 @@ public class MainController implements Initializable {
 
 
                         if (p != null) {
-
-                            System.out.println(p.getNom());
-
-
-
-
+                            System.out.println("const patient exist");
                             loggedInOrthophonist.ajouterc(c);
 
                             if (p.isAdmet()) {
@@ -553,12 +738,6 @@ public class MainController implements Initializable {
 
 
                                 p = new Adulte(namecon.getText());
-
-                                System.out.println(p.getNom());
-
-
-
-
                                 loggedInOrthophonist.addP(p);
 
                                 loggedInOrthophonist.ajouterc(c);
@@ -569,16 +748,10 @@ public class MainController implements Initializable {
                             } else {
 
                                 p = new Enfant(namecon.getText());
-
-
-
-
                                 loggedInOrthophonist.addP(p);
 
                                 loggedInOrthophonist.ajouterc(c);
-
-
-
+                                System.out.println("const enf dont exist but created");
 
                             }
 
@@ -603,34 +776,32 @@ public class MainController implements Initializable {
                                 namesuivi.getText() // Assuming namesuivi is the patient's name field
 
                         );
+                        Patient pp = checkConsultation(namesuivi.getText());
 
-                        loggedInOrthophonist.ajouters(ss);
-
-                        if (p.isAdmet()) {
-
-                            Dossier d = loggedInOrthophonist.chercheDossier(p.getNom());
-
+                        if (pp != null && pp.isAdmet()) {
+                            System.out.println("patient is admet");
+                            loggedInOrthophonist.ajouters(ss);
+                            Dossier d = loggedInOrthophonist.chercheDossier(pp.getNom());
+                            System.out.println(d.getPatient().getNom());
                             d.addRendezVous(ss.getDate(), ss);
 
                         } else {
+                            loggedInOrthophonist.ajouters(ss);
 
-                            Dossier d = new Dossier(p);
-
+                            System.out.println("patient is not admet");
+                            pp.setAdmet();
+                            loggedInOrthophonist.addP(pp);// add to set patient
+                            Dossier d = new Dossier(pp);
+                            System.out.println(d.getPatient().getNom());
                             d.addRendezVous(ss.getDate(), ss);
-
-                            loggedInOrthophonist.addPatient(d);
-
+                            loggedInOrthophonist.addPatient(d);// add to set of dossier
+                            System.out.println(d.getNum());
+                            loggedInOrthophonist.addPP(pp.getNom(), d.getNum());
                         }
 
-                        // Dossier d = loggedInOrthophonist.chercheDossier(p.getNom());
+                    }
 
-                        // d.addRendezVous(ss.getDate(), ss);
-
-
-
-
-                    } else if (type_app.getValue().equals("atelier")) {
-
+                    else if (type_app.getValue().equals("atelier")) {
                         Atelier atelier = new Atelier(
 
                                 thema.getText(),
@@ -638,19 +809,53 @@ public class MainController implements Initializable {
                                 date.getValue(),
 
                                 localTime);
+                        /*************************************************** */
+                        // liste num dossier des patients
+
+                        for (Item item : data) {
+                            Patient ppp = checkConsultation(item.getName());
+
+                            if (ppp != null && ppp.isAdmet()) {
+                                Dossier dd = loggedInOrthophonist.chercheDossier(ppp.getNom());
+                                System.out.println("ddddddddddddd");
+                                patientFolders.put(ppp.getNom(), dd);
+                                dd.addRendezVous(atelier.getDate(), atelier);
+                                atelier.Addpn(ppp.getNom());
+
+                            } else {
+                                System.out.println("22");
+                                // loggedInOrthophonist.ajoutera(atelier);
+                                ppp.setAdmet();
+                                atelier.Addpn(ppp.getNom());
+
+                                // loggedInOrthophonist.addP(ppp);// add to set patient
+                                Dossier d = new Dossier(ppp);
+                                System.out.println(d.getPatient().getNom());
+
+                                d.addRendezVous(atelier.getDate(), atelier);
+                                loggedInOrthophonist.addPatient(d);// add to set of dossier
+                                System.out.println(d.getNum());
+                                loggedInOrthophonist.addPP(ppp.getNom(), d.getNum());
+                                patientFolders.put(ppp.getNom(), d);
+                            }
+
+                            atelier.setPat(patientFolders);
+                            System.out.println("***********************");
+
+                            System.out.println(patientFolders);
+                            System.out.println("***********************");
+
+                            loggedInOrthophonist.ajoutera(atelier);
+                        }
+
+                        /*************************************************** */
 
                         loggedInOrthophonist.ajoutera(atelier);
-
                     }
-
-                    showAppData();
-
-                    a.succesMessage("success");
-
-                    management.sauvegarderUtilisateurs();
-
                 }
-
+                showAppDatainit();
+                a.succesMessage("success");
+                management.sauvegarderUtilisateurs();
             } catch (NumberFormatException ex) {
 
                 a.errorMessg("Invalid time format");
@@ -743,42 +948,27 @@ public class MainController implements Initializable {
     public void showAppData() {
 
         ObservableList<RendezVous> appointmentListData = appointmentGetData();
+        tableConsultaion.setItems(appointmentListData);
+        tableAtelier.setItems(appointmentListData);
+        tablesuivi.setItems(appointmentListData);
+        // patientstabb.setItems(appointmentListData);
 
-        System.out.println("Data size: " + appointmentListData.size()); // Debugging line
-        bo_init.setVisible(false);
-        BO.setVisible(false);
+        // Set up the nameSuivitab and enligneSuivitab columns for Suivi appointments
+        namesuivitab.setCellValueFactory(new PropertyValueFactory<>("nom"));
+        // eopsuivitab.setCellValueFactory(new PropertyValueFactory<>("e"));
+        // numdossiersuivitab.setCellValueFactory(new
+        // PropertyValueFactory<>("numerodossier"));
 
-
-        if (appointmentListData.isEmpty()) {
-
-            System.out.println("No data available");
-
-        } else {
-
-            tableConsultaion.setItems(appointmentListData);
-
-            tableAtelier.setItems(appointmentListData);
-
-            tablesuivi.setItems(appointmentListData);
-
-
-
-
-            // Set up columns
-
-            namesuivitab.setCellValueFactory(new PropertyValueFactory<>("nom"));
-
-            eopsuivitab.setCellValueFactory(new PropertyValueFactory<>("e"));
-
-            numdossiersuivitab.setCellValueFactory(new PropertyValueFactory<>("numerodossier"));
-
-            namecontab.setCellValueFactory(new PropertyValueFactory<>("nom"));
-
-            agecontab.setCellValueFactory(new PropertyValueFactory<>("age"));
-
-            datecontab.setCellValueFactory(new PropertyValueFactory<>("date"));
-
-            duationcontab.setCellValueFactory(new PropertyValueFactory<>("duree"));
+        // Set up other columns similarly, assuming these methods exist in RendezVous
+        namecontab.setCellValueFactory(new PropertyValueFactory<>("nom"));
+        agecontab.setCellValueFactory(new PropertyValueFactory<>("age"));
+        datecontab.setCellValueFactory(new PropertyValueFactory<>("date"));
+        duationcontab.setCellValueFactory(new PropertyValueFactory<>("duree"));
+        // gendercontab.setCellValueFactory(new PropertyValueFactory<>("gender"));
+        // .setCellValueFactory(new PropertyValueFactory<>("nom"));
+        // numdossierateliertab.setCellValueFactory(new
+        // PropertyValueFactory<>("numerodossier"));
+        namesateliertab.setCellValueFactory(new PropertyValueFactory<>("numerodossier"));
 
         }
 
@@ -816,9 +1006,7 @@ public class MainController implements Initializable {
                 patient_page.setVisible(false);
 
                 app_form.setVisible(true);
-
-
-
+                showAppDatainit();
 
             } else {
 
@@ -833,8 +1021,8 @@ public class MainController implements Initializable {
                     patients_form.setVisible(true);
 
                     app_form.setVisible(false);
-
-                    showPatientData();
+                    showAppDatainit();
+                    // showPatientData();
 
 
 
@@ -901,642 +1089,418 @@ public class MainController implements Initializable {
 
 
 
-    public void addPatient(ActionEvent event) {
-
-        patient_form.setVisible(true);
-
-        extra_infoA.setVisible(false);
-
-        extra_infoY.setVisible(false);
-
-    }
-
-
-
-
-    public void showPatientData() {
-
-        patient_id.setCellValueFactory(cellData -> {
-
-            Double numero = cellData.getValue().getNum();
-
-            return new SimpleDoubleProperty(numero).asObject();
-
-        });
-
-        // String doubleString = Double.toString(doss1.getNum());
-
-
-
-
-        patient_fname.setCellValueFactory(
-
-                cellData -> new SimpleStringProperty(cellData.getValue().getpatient().getprenom()));
-
-        patient_lname
-
-                .setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getpatient().getnom()));
-
-
-
-
-        // Create an observable list for the dossiers
-
-        dossierList = FXCollections.observableArrayList();
-
-        patientstab.setItems(dossierList);
-
-        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
-
-
-
-
-        dossierList.clear(); // Clear existing data
-
-        dossierList.addAll(loggedInOrthophonist.getPatients().values()); // Add new data
-
-    }
-
-
-
-
-    public void showDossierData() {
-
-        f.setText(doss1.getpatient().getnom() + " " + doss1.getpatient().getprenom());
-
-        a.setText(doss1.getpatient().getadress());
-
-        l.setText(doss1.getpatient().getlieu());
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
-        String dateString = doss1.getpatient().getdate().format(formatter);
-
-        b.setText(dateString);
-
-        int age = doss1.getpatient().getAge(doss1.getpatient().getdate());
-
-        String y = Integer.toString(age);
-
-        System.out.println(y);
-
-        agepatient.setText(y);
-
-
-
-
-    }
-
-
-
-
-    private Patient patient;
-
-    Dossier doss1;
-
-
-
-
-    public void submission(ActionEvent event) {
-
-        String nom = patient_nom.getText();
-
-        String prenom = patient_prenom.getText();
-
-        LocalDate year = AGE.getValue();
-
-        String text = numdos.getText();
-
-        double id = Double.parseDouble(text);
-
-
-
-
-        ClasseDetude.getItems().setAll(ClasseEtude.values());
-
-
-
-
-        patient = new Patient(nom, prenom, year);
-
-        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
-
-
-
-
-        if (loggedInOrthophonist.isPatient(patient)) {
-            initialize3();
-
-
-            patient_page.setVisible(true);
-
-            patient_form.setVisible(false);
-
-            dash_form.setVisible(false);
-
-            patients_form.setVisible(false);
-
-            app_form.setVisible(false);
-
-            patient_page.setVisible(true);
-
-            doss1 = loggedInOrthophonist.getPatient(id);
-
-            showDossierData();
-
-
-
-
-            System.out.println("siiiiiii");
-
-
-
-
-        } else {
-
-            System.out.println("hereeeee");
-
-            if (patient.isAdulte(year)) {
-
-                System.out.println("adulte");
-
-                extra_infoY.setVisible(false);
-
-                extra_infoA.setVisible(true);
-
-            } else {
-
-                System.out.println("young");
-
-                extra_infoY.setVisible(true);
-
-                extra_infoA.setVisible(false);
-
-            }
-
-
-
-
-        }
-
-
-
-
-    }
-
-
-
-
-    public void done(ActionEvent event) {
-
-
-
-
-        if (patient.getAdulte()) {
-
-            String Lieu = lieu.getText();
-
-            String adresse = adress.getText();
-
-            String proffession = profession.getText();
-
-            String telephone = tel.getText();
-
-            String diplom = diplome.getText();
-
-            patient.setadress(adresse);
-
-            patient.setlieu(Lieu);
-
-            Adulte adulte = new Adulte(patient, diplom, proffession, telephone);
-
-            doss1 = new Dossier(adulte);
-
-
-
-
-        } else {
-
-            String Lieu1 = lieu1.getText();
-
-            String adresse1 = adress1.getText();
-
-            String tel1 = telparent.getText();
-
-            ClasseEtude classe = ClasseDetude.getValue();
-
-            patient.setadress(adresse1);
-
-            patient.setlieu(Lieu1);
-
-            Enfant enfant = new Enfant(patient, classe, tel1);
-
-            doss1 = new Dossier(enfant);
-
-
-
-
-        }
-
-
-
-
-        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
-
-        if (loggedInOrthophonist.isPatient(patient)) {
-
-            patient_page.setVisible(true);
-
-            patient_form.setVisible(false);
-
-            dash_form.setVisible(false);
-
-            patients_form.setVisible(false);
-
-            app_form.setVisible(false);
-
-            System.out.println("siiiiiii");
-
-
-
-
-        } else {
-
-            System.out.println("hereeeee");
-
-            loggedInOrthophonist.addPatient(doss1);
-
-
-
-
-        }
-
-        management.sauvegarderUtilisateurs();
-
-        showPatientData();
-
-
-
-
-    }
-
-    private Anam currentAnam= new Anam();
-    private Map<String, QuestionA> questionMap;
-    private Boinitial boin=new Boinitial(currentAnam, LocalDate.now());
-    private Bo currentBo=new Bo(LocalDate.now());
-    private Trouble trouble;
-    private String projet;
-    private String conclusion;
-    private TestSimple questionnaire;
-
-
-    private Map<Question, Integer> questionScores = new HashMap<>();
-
-    private Question selectedQuestion;
-
-
-    @FXML
-    public void Enregistrer_Bo(ActionEvent event){
-        currentBo.ajouterTrouble(trouble);
-        currentBo.setProjetTherapeutique(projet);
-
-        conclusion = Conclusion_test.getText();
-
-        questionnaire.setConclusion(conclusion);
-
-        currentBo.ajouterEpreuve(questionnaire);
-        doss1.ajouterBo(currentBo);
-
-        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
-        loggedInOrthophonist.updateDossier(doss1);
-        management.sauvegarderUtilisateurs();
-        BO.setVisible(false);
-        maine.setVisible(true);
-        loggedInOrthophonist.updateDossier(doss1);
-        initialize3();
-        System.out.println("doOOOOOOOOOOOe");
-    }
-
-
-
-
-    @FXML
-    public void Add_bo(ActionEvent event ){
-        maine.setVisible(false);
-        BO.setVisible(false);
-        bo_init.setVisible(false);
-        initialize2();
-        if (doss1.getBo().isEmpty()){
-            bo_init.setVisible(true);
-            System.out.println("emptyyyyyyyyyyy");
-            if (doss1.getpatient().isAdulte(doss1.getpatient().getDatenes())){
-            currentAnam.initializeAdultAnam(); // or initializeAdultAnam based on context
-        }
-            else{
-            currentAnam.initializeChildAnam(); // or initializeAdultAnam based on context
-        }
-            questionMap = new HashMap<>();
-            for (Cat_Quest category : Cat_Quest.values()) {
-                for (QuestionA question : currentAnam.getQuestionsForCategory(category)) {
-                    questionMap.put(question.getQuestion(), question);
-                }
-            }
-    
-            ObservableList<String> questions = FXCollections.observableArrayList(questionMap.keySet());
-            questionListView.setItems(questions);
-    
-            questionListView.setOnMouseClicked(mouseEvent -> handleQuestionSelection(mouseEvent));
-        }
-
-        else {
-            BO.setVisible(true);
-            ajouterQuest.setVisible(false);
-            ajouterExo.setVisible(false);
-            nom_quest.setVisible(false);
-            okk.setVisible(false);
-
-            System.out.println("fiiiiiiiiiiiiiiiiih");
-
-        }
-        
-
-    }
-
-    public void add_epreuve(){
-        ajouterQuest.setVisible(true);
-        ajouterExo.setVisible(true);
-        nom_quest.setVisible(false);
-
-    }
-
-    public void new_quest(){
-        nom_quest.setVisible(true);
-        okk.setVisible(true);
-    }
-    
-    @FXML
-    public void ok_nom(){
-        String testName = nom_quest.getText();
-
-        questionnaire=new TestSimple(testName);
-        questionnaire.initialiserTest();
-        System.out.println("bieeeeen");
-        displayTest();
-        initialize();
-        questionScores.clear();
-        totalScoreLabel.setText("Total Score: 0");
-
-    }
-
-
-    private void displayTest() {
-        form.getItems().clear();
-        for (Question question : questionnaire.getQuestions()) {
-            TextFlow questionFlow = new TextFlow();
-
-            Text questionText = new Text(question.getEnonce() + "\n");
-            questionFlow.getChildren().add(questionText);
-
-            if (question instanceof QCU) {
-                QCU qcu = (QCU) question;
-                for (String proposition : qcu.getPropositions()) {
-                    Text choiceText = new Text(proposition);
-                    if (proposition.equals(qcu.getBonneReponse())) {
-                        choiceText.setStyle("-fx-font-weight: bold");
-                    }
-                    questionFlow.getChildren().add(new Text("\n - "));
-                    questionFlow.getChildren().add(choiceText);
-                }
-            } else if (question instanceof QCM) {
-                QCM qcm = (QCM) question;
-                for (String proposition : qcm.getPropositions()) {
-                    Text choiceText = new Text(proposition);
-                    if (qcm.getBonnesReponses().contains(proposition)) {
-                        choiceText.setStyle("-fx-font-weight: bold");
-                    }
-                    questionFlow.getChildren().add(new Text("\n - "));
-                    questionFlow.getChildren().add(choiceText);
-                }
-            } else if (question instanceof ReponseLibre) {
-                ReponseLibre rl = (ReponseLibre) question;
-                Text answerText = new Text("\n Réponse: " + rl.getBonneReponse());
-                answerText.setStyle("-fx-font-weight: bold");
-                questionFlow.getChildren().add(answerText);
-            }
-
-            form.getItems().add(questionFlow);
-
-
-        }
-    }
-
-
-    @FXML
-    public void initialize() {
-        scoreComboBox.getItems().addAll(1, 2, 3,4,5,6,7,8,9,10);
-        form.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                int index = form.getSelectionModel().getSelectedIndex();
-                selectedQuestion = questionnaire.getQuestions().toArray(new Question[0])[index];
-            }
-        });
-
-
-    }
-
-    @FXML
-    public void initialize2() {
-        // Initialize the ComboBox with CategorieTrouble values
-        categorieComboBox.setItems(FXCollections.observableArrayList(CategorieTrouble.values()));
-        System.out.println("iissssss theeers");
-
-        
-    }
-
-    @FXML
-    public void handleSubmitScore() {
-        if (selectedQuestion != null && scoreComboBox.getValue() != null) {
-            selectedQuestion.setScore(scoreComboBox.getValue());
-            updateTotalScore();
-        }
-    }
-
-    private void updateTotalScore() {
-        questionnaire.Calc_Score();
-        totalScoreLabel.setText("Total Score: " + questionnaire.getScore());
-    }
-
-    @FXML
-    private void handleAddTrouble() {
-        String nom = troubleNameField.getText();
-        CategorieTrouble categorie = categorieComboBox.getValue();
-        System.out.println("whyyyyy");
-        trouble = new Trouble(nom, categorie);
- 
-    }
-
-    @FXML
-    private void handleSubmitProjet() {
-        projet = projetNameField.getText();
-        System.out.println("donNNNNNNNNNe");
-
-    }
-
-
-
-
-    @FXML
-    private void handleQuestionSelection(MouseEvent mouseEvent) {
-        String selectedQuestion = questionListView.getSelectionModel().getSelectedItem();
-        if (selectedQuestion != null) {
-            QuestionA question = questionMap.get(selectedQuestion);
-            answerTextField.setText(question.getReponse());
-            System.out.println("ssssssssss");
-            updateQuestionInAnamnese(question);
-
-        }
-    }
-
-    
-    @FXML
-    private void handleSubmitAnswer() {
-        doss1.ajouterBo(boin);
-        System.out.println("addeeeeeed");
-        bo_init.setVisible(false);
-        maine.setVisible(true);
-        if (doss1.getBo().isEmpty()){
-            System.out.println("Always empty");
-        }
-        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
-
-        loggedInOrthophonist.updateDossier(doss1);
-        management.sauvegarderUtilisateurs();
-
-
-
-
-
-    }
-
-    private void updateQuestionInAnamnese(QuestionA updatedQuestion) {
-        for (Map.Entry<Cat_Quest, List<QuestionA>> entry : currentAnam.getMap().entrySet()) {
-            List<QuestionA> questions = entry.getValue();
-            for (QuestionA question : questions) {
-                if (question.equals(updatedQuestion)) {
-                    question.setReponse(updatedQuestion.getReponse());
-                    // Optionally, you can break out of the loop if you expect only one occurrence of the question
-                    // break;
-                }
-            }
-        }
-    }
-
-
-    @FXML
-    private void handleBoTableClicked(MouseEvent event) {
-        System.out.println("here we go again");
-
-        Bo selectedBo = boTableView.getSelectionModel().getSelectedItem();
-        System.out.println("here we go again");
-
-        if (selectedBo != null) {
-            // Affichez le Bo complet dans un autre TableView ou TextArea
-            displayFullBo(selectedBo);
-
-            System.out.println("here we go again");
-
-        }
-        else {
-            System.out.println("here we gGGGGGGGGo again");
-        }
-    
-
-}
-
-private void displayFullBo(Bo bo) {
-    affichage_Bo.setVisible(true);
-    maine.setVisible(false);
-    //initialize4();
-    //setBoo(bo);
-    
-    
-}
-
-
-public void initialize4() {
-    testNameColumn.setCellValueFactory(new PropertyValueFactory<>("nom"));
-    testScoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
-    testConclusionColumn.setCellValueFactory(new PropertyValueFactory<>("conclusion"));
-}
-
-public void setBoo(Bo bo) {
-    testTable.getItems().setAll(bo.getEpreuvesCliniques());
-    
-    if (bo instanceof Boinitial) {
-        Boinitial boInitial = (Boinitial) bo;
-        anamArea.setText(boInitial.getAnam().toString());
-        anamArea.setVisible(true);
-    } else {
-
-        anamArea.clear();
-        anamArea.setVisible(false);
-        projetTherapeutiqueField.setText(bo.getProjetTherapeutique());
-        troublesArea.setText(bo.getDiagnostic().stream().map(Trouble::toString).reduce((s1, s2) -> s1 + "\n" + s2).orElse(""));
-
-    }
-}
-
-
-@FXML
-private void initialize3() {
-    boTableView.getColumns().clear();
-    boTableView.getItems().clear();
-    if (boTableView == null) {
-        System.err.println("boTableView is null");
-        return;
-    }
-
-    if (doss1 == null || doss1.getBo() == null) {
-        System.err.println("doss1 or doss1.getBo() is null");
-        return;
-    }
-
-    // Configure the TableView
-    TableColumn<Bo, LocalDate> creationDateColumn = new TableColumn<>("Date de Création");
-    creationDateColumn.setCellValueFactory(new PropertyValueFactory<>("crea"));
-    boTableView.getColumns().add(creationDateColumn);
-
-    // Add Bo objects to the TableView
-    Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
-    for (Bo bo : doss1.getBo()) {
-        boTableView.getItems().add(bo);
-    }
-}
-
-
-
-   
-
-   
-
+    /*
+     * public void addPatient(ActionEvent event) {
+     * patient_form.setVisible(true);
+     * extra_infoA.setVisible(false);
+     * extra_infoY.setVisible(false);
+     * }
+     * 
+     * public void showPatientData() {
+     * patient_id.setCellValueFactory(cellData -> {
+     * Double numero = cellData.getValue().getNum();
+     * return new SimpleDoubleProperty(numero).asObject();
+     * });
+     * // String doubleString = Double.toString(doss1.getNum());
+     * 
+     * patient_fname.setCellValueFactory(
+     * cellData -> new
+     * SimpleStringProperty(cellData.getValue().getpatient().getprenom()));
+     * patient_lname
+     * .setCellValueFactory(cellData -> new
+     * SimpleStringProperty(cellData.getValue().getpatient().getnom()));
+     * 
+     * // Create an observable list for the dossiers
+     * dossierList = FXCollections.observableArrayList();
+     * patientstab.setItems(dossierList);
+     * Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+     * 
+     * dossierList.clear(); // Clear existing data
+     * dossierList.addAll(loggedInOrthophonist.getPatients().values()); // Add new
+     * data
+     * }
+     * 
+     * public void showDossierData() {
+     * f.setText(doss1.getpatient().getnom() + " " +
+     * doss1.getpatient().getprenom());
+     * a.setText(doss1.getpatient().getadress());
+     * l.setText(doss1.getpatient().getlieu());
+     * DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+     * String dateString = doss1.getpatient().getdate().format(formatter);
+     * b.setText(dateString);
+     * int age = doss1.getpatient().getAge(doss1.getpatient().getdate());
+     * String y = Integer.toString(age);
+     * System.out.println(y);
+     * agepatient.setText(y);
+     * 
+     * }
+     * 
+     * private Patient patient;
+     * Dossier doss1;
+     * 
+     * public void submission(ActionEvent event) {
+     * String nom = patient_nom.getText();
+     * String prenom = patient_prenom.getText();
+     * LocalDate year = AGE.getValue();
+     * String text = numdos.getText();
+     * double id = Double.parseDouble(text);
+     * 
+     * ClasseDetude.getItems().setAll(ClasseEtude.values());
+     * 
+     * patient = new Patient(nom, prenom, year);
+     * Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+     * 
+     * if (loggedInOrthophonist.isPatient(patient)) {
+     * patient_page.setVisible(true);
+     * patient_form.setVisible(false);
+     * dash_form.setVisible(false);
+     * patients_form.setVisible(false);
+     * app_form.setVisible(false);
+     * patient_page.setVisible(true);
+     * doss1 = loggedInOrthophonist.getPatient(id);
+     * showDossierData();
+     * 
+     * System.out.println("siiiiiii");
+     * 
+     * } else {
+     * System.out.println("hereeeee");
+     * if (patient.isAdulte(year)) {
+     * System.out.println("adulte");
+     * extra_infoY.setVisible(false);
+     * extra_infoA.setVisible(true);
+     * } else {
+     * System.out.println("young");
+     * extra_infoY.setVisible(true);
+     * extra_infoA.setVisible(false);
+     * }
+     * 
+     * }
+     * 
+     * }
+     * 
+     * public void done(ActionEvent event) {
+     * 
+     * if (patient.getAdulte()) {
+     * String Lieu = lieu.getText();
+     * String adresse = adress.getText();
+     * String proffession = profession.getText();
+     * String telephone = tel.getText();
+     * String diplom = diplome.getText();
+     * patient.setadress(adresse);
+     * patient.setlieu(Lieu);
+     * Adulte adulte = new Adulte(patient, diplom, proffession, telephone);
+     * doss1 = new Dossier(adulte);
+     * 
+     * } else {
+     * String Lieu1 = lieu1.getText();
+     * String adresse1 = adress1.getText();
+     * String tel1 = telparent.getText();
+     * ClasseEtude classe = ClasseDetude.getValue();
+     * patient.setadress(adresse1);
+     * patient.setlieu(Lieu1);
+     * Enfant enfant = new Enfant(patient, classe, tel1);
+     * doss1 = new Dossier(enfant);
+     * 
+     * }
+     * 
+     * Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+     * if (loggedInOrthophonist.isPatient(patient)) {
+     * patient_page.setVisible(true);
+     * patient_form.setVisible(false);
+     * dash_form.setVisible(false);
+     * patients_form.setVisible(false);
+     * app_form.setVisible(false);
+     * System.out.println("siiiiiii");
+     * 
+     * } else {
+     * System.out.println("hereeeee");
+     * loggedInOrthophonist.addPatient(doss1);
+     * 
+     * }
+     * management.sauvegarderUtilisateurs();
+     * showPatientData();
+     * 
+     * }
+     */
 
     Management m = new Management();
+
+    public void showAppDatainit() {
+        ObservableList<RendezVous> listDatat = FXCollections.observableArrayList();
+        ObservableList<RendezVous> listDatacons = FXCollections.observableArrayList();
+        ObservableList<RendezVous> listData = FXCollections.observableArrayList();
+        ObservableList<Patient> listPat = FXCollections.observableArrayList();
+
+        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+        patientstab.setOnMouseClicked((MouseEvent event) -> {
+            if (event.getClickCount() > 1) {
+                onRowSelect();
+            }
+        });
+
+        if (loggedInOrthophonist != null) {
+            TreeSet<Suivi> suivi = loggedInOrthophonist.getSuivi();
+
+            listData.addAll(suivi);
+
+            tablesuivi.setItems(listData);
+            namesuivitab.setCellValueFactory(new PropertyValueFactory<>("nom"));
+            eopsuivitab.setCellValueFactory(new PropertyValueFactory<>("e"));
+
+            TreeSet<Consultation> consultations = loggedInOrthophonist.getConsultations();
+
+            listDatacons.addAll(consultations);
+
+            tableConsultaion.setItems(listDatacons);
+            namecontab.setCellValueFactory(new PropertyValueFactory<>("nom"));
+            agecontab.setCellValueFactory(new PropertyValueFactory<>("age"));
+            datecontab.setCellValueFactory(new PropertyValueFactory<>("date"));
+            duationcontab.setCellValueFactory(new PropertyValueFactory<>("duree"));
+
+            TreeSet<Atelier> ateliers = loggedInOrthophonist.getAtelier();
+
+            listDatat.addAll(ateliers);
+            tableAtelier.setItems(listDatat);
+            namesateliertab.setCellValueFactory(new PropertyValueFactory<>("patientNames"));
+
+            Set<Patient> patient = loggedInOrthophonist.getPatient();
+            System.out.println(patient);
+            listPat.addAll(patient);
+            patientstab.setItems(listPat);
+            patient_fname.setCellValueFactory(new PropertyValueFactory<>("nom"));
+
+        }
+        //
+        // tableAtelier.setItems(listData);
+
+        // patientstabb.setItems(appointmentListData);
+
+        // Set up the nameSuivitab and enligneSuivitab columns for Suivi appointments
+
+        // Set up other columns similarly, assuming these methods exist in RendezVous
+
+    }
+
+    private void onRowSelect() {
+        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+        // ObservableList<HashMap<LocalDate,RendezVous>> listrdv =
+        // FXCollections.observableArrayList();
+        ObservableList<RendezVous> rendezVousList = FXCollections.observableArrayList(); // List to store rendez
+        ObservableList<FicheSuivi> F = FXCollections.observableArrayList(); // List to store rendez
+        Patient selectedPatient = patientstab.getSelectionModel().getSelectedItem();
+
+        if (selectedPatient != null) {
+            String selectedName = selectedPatient.getNom();
+            System.out.println("Selected name: " + selectedName);
+            patients_form.setVisible(false);
+            patient_page.setVisible(true);
+            f.setText(selectedPatient.getNom());
+            System.out.println(selectedPatient.getClass().getName());
+
+            // agepatient.setText(toString(selectedPatient.getAge()));
+            if (selectedPatient.getClass().getName() == "cabinet_management.Adulte") {
+                System.out.println("aaaaaaaaaaaaaaa");
+                adult_info.setVisible(true);
+                enfant_info.setVisible(false);
+
+            } else {
+                adult_info.setVisible(false);
+                enfant_info.setVisible(true);
+            }
+            Double d = loggedInOrthophonist.getPP().get(selectedPatient.getNom());
+
+            Dossier dd = loggedInOrthophonist.getPatient(d);
+            this.ddi = dd;
+            HashMap<LocalDate, RendezVous> rendezVousMap = dd.getRendezvous();
+            // Convert the HashMap entries into a Set
+            Set<Map.Entry<LocalDate, RendezVous>> entrySet = rendezVousMap.entrySet();
+
+            // Iterate over the entry set
+            for (Map.Entry<LocalDate, RendezVous> entry : entrySet) {
+                RendezVous rendezVous = entry.getValue(); // Get the RendezVous object from the entry
+                // Add the rendezvous to the list
+                rendezVousList.add(rendezVous);
+                apppat.setItems(rendezVousList);
+                // Set the cell value factory to display desired attribute
+                // For example, if you want to display the date attribute of RendezVous:
+                patientstabbdate.setCellValueFactory(new PropertyValueFactory<>("date"));
+                patientstabbtype.setCellValueFactory(new PropertyValueFactory<>("date"));
+            }
+            if (!dd.getFiche().isEmpty()) {
+                System.out.println("not empty");
+                Set<FicheSuivi> v = dd.getFiche();
+
+                F.addAll(v);
+                tabfichepatpage.setItems(F);
+                numfiche.setCellValueFactory(new PropertyValueFactory<>("num"));
+                et.setCellValueFactory(new PropertyValueFactory<>("atteint"));
+                dt.setCellValueFactory(new PropertyValueFactory<>("d"));
+
+                tabfichepatpage.setOnMouseClicked((MouseEvent event) -> {
+                    if (event.getClickCount() > 1) {
+                        onRowSelectt();
+                    }
+                });
+                // Set the ObservableList to the TableView
+
+                /*
+                 * List<Objectif> f = new ArrayList<Objectif>();
+                 * ObservableList<Objectif> listPat = FXCollections.observableArrayList();
+                 * listPat.addAll(f);
+                 * tablefiche.setItems(listPat);
+                 * colobj.setCellValueFactory(new PropertyValueFactory<>("nom"));
+                 */
+                /*
+                 * tabfichepatpage.getSelectionModel().selectedItemProperty()
+                 * .addListener((obs, oldSelection, newSelection) -> {
+                 * // FicheSuivi newSelection =
+                 * // tabfichepatpage.getSelectionModel().getSelectedItem();
+                 * 
+                 * System.out.println("dddddddddddddddddddddddd");
+                 * // A row is selected, set the form accordingly
+                 * patient_page.setVisible(false);
+                 * fiche_form.setVisible(true);
+                 * colobj.setCellValueFactory(new PropertyValueFactory<>("nom"));
+                 * if (newSelection != null) {
+                 * List<Objectif> objectifList = newSelection.getO(); // Initialize your list
+                 * here
+                 * 
+                 * // Create an observable list from your objectifList
+                 * ObservableList<Objectif> observableList = FXCollections
+                 * .observableArrayList(objectifList);
+                 * 
+                 * // Set the items of the tableView to the observable list
+                 * tablefiche.setItems(observableList);
+                 * 
+                 * }
+                 * });
+                 */
+
+            } else {
+                System.out.println("nullllllllllll");
+            }
+        }
+    }
+
+    public void onRowSelectt() {
+        FicheSuivi selectedFicheSuivi = tabfichepatpage.getSelectionModel().getSelectedItem();
+        fiche_form.setVisible(true);
+        patient_page.setVisible(false);
+
+        // Populate the new table with Objectifs from the selected FicheSuivi
+        List<Objectif> objectifList = selectedFicheSuivi.getO();
+        dataobj = FXCollections.observableArrayList(objectifList);
+        tablefiche.setItems(dataobj);
+        colobj.setCellValueFactory(new PropertyValueFactory<>("nom"));
+        colscore.setCellValueFactory(new PropertyValueFactory<>("note"));
+
+    };
+
+    public void saveChanges(ActionEvent e) {
+        if (e.getSource() == mod) {
+            // Update the selectedFicheSuivi with new values from the form controls
+            // Example: selectedFicheSuivi.setNum(newNumValue);
+
+            updateFicheSuiviFile();
+
+            // refreshForm1();
+
+            fiche_form.setVisible(false);
+            patient_page.setVisible(true);
+        }
+    }
+
+    public void updateFicheSuiviFile() {
+        FicheSuivi selectedFicheSuivi = tabfichepatpage.getSelectionModel().getSelectedItem();
+        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+        Set<FicheSuivi> ficheSuiviSet = loggedInOrthophonist.getPatient(ddi.getNum()).getFiche();
+        ficheSuiviSet.remove(selectedFicheSuivi);
+        List<Objectif> regularList = new ArrayList<>(dataobj);
+        // Patient selectedPatient = patientstab.getSelectionModel().getSelectedItem();
+        // Double d = loggedInOrthophonist.getPP().get(selectedPatient.getNom());
+
+        FicheSuivi ff = new FicheSuivi(regularList, LocalDate.now(),
+                loggedInOrthophonist.getPatient(ddi.getNum()).getFiche().size() + 1, att.isSelected());
+
+        ficheSuiviSet.add(ff);
+        loggedInOrthophonist.getPatient(ddi.getNum()).setFiche(ficheSuiviSet);
+
+        // saveOrthophoniste(loggedInOrthophonist);
+        management.sauvegarderUtilisateurs();
+        tablefiche.getItems().clear();
+        scoreText.clear();
+        objarea.clear();
+
+        // Refresh the table in form2
+        onRowSelect();
+
+    };
+
+    public void updateSecondColumn(ActionEvent e) {
+        AlertMessage alertMessage = new AlertMessage();
+        if (e.getSource() == addBtnScore) {
+            Objectif selectedObjectif = tablefiche.getSelectionModel().getSelectedItem();
+            if (selectedObjectif != null) {
+                String newContent = scoreText.getText();
+                int newNote = Integer.parseInt(newContent);
+                if (newNote >= 0 && newNote <= 5) {
+                    selectedObjectif.setNote(newNote);
+                    tablefiche.refresh(); // Refresh the table to reflect changes
+                } else {
+                    // Handle invalid range
+                    alertMessage.errorMessg("Note should be between 0 and 5");
+                    // You may display an error message to the user
+                }
+            }
+        }
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // kkk
         displayName();
-        showAppData();
+        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
         appointmentGenderList();
         appointmentStatusList();
+        nametabatelier.setCellValueFactory(new PropertyValueFactory<>("name"));
 
+        // Initialize the data list
+        data = FXCollections.observableArrayList();
+        dataobj = FXCollections.observableArrayList();
+        tablefiche.setItems(dataobj);
+        // Set the data list to the TableView
+        tabnomatelier.setItems(data);
         LocalDate currentDate = LocalDate.now();
         LocalTime currentTime = LocalTime.now();
-
-        Orthophoniste loggedInOrthophonist = management.getUtilisateur(Data.name);
+        HashMap<Double, Dossier> patients = loggedInOrthophonist.getPatients();
+        for (Double key : patients.keySet()) {
+            Dossier dossier = patients.get(key);
+            System.out.println("Dossier Key: " + key);
+            System.out
+                    .println("Patient Name: " + dossier.getpatient().getnom() + " " + dossier.getpatient().getprenom());
+            System.out.println("Dossier Number: " + dossier.getNum());
+            System.out.println("-------------------");
+        }
+        TreeSet<Atelier> AtelierSet = new TreeSet<>();
+        for (Atelier a : AtelierSet) {
+            System.out.println(a.getDate());
+        }
+        showAppDatainit();
         // loggedInOrthophonist.ajouterc(c);
         // management.sauvegarderUtilisateurs();
         // showAppData();
+    }
+
+    public static class Item {
+        private final String name;
+
+        public Item(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 
 }

@@ -21,6 +21,7 @@ public class Orthophoniste implements Serializable {
     private String email;
 
     private HashMap<Double, Dossier> patients = new HashMap<>();
+    private HashMap<String, Double> pp = new HashMap<>();
     // protected Set<Patient> patient = new HashSet<>();
 
     // protected HashMap<Double, Dossier> patients =new HashMap<>() ;
@@ -42,6 +43,7 @@ public class Orthophoniste implements Serializable {
         this.AtelierSet = new TreeSet<>();
         this.patient = new HashSet<>();
         this.patients = new HashMap<>();
+        this.pp = new HashMap<>();
     }
 
     public void addP(Patient p) {
@@ -62,6 +64,7 @@ public class Orthophoniste implements Serializable {
         this.AtelierSet = new TreeSet<>();
         this.patient = new HashSet<>();
         this.patients = new HashMap<>();
+        this.pp = new HashMap<>();
     }
 
     // Getters and Setters for fields
@@ -107,7 +110,20 @@ public class Orthophoniste implements Serializable {
     }
 
     public Dossier chercheDossier(String nom) {
-        return patients.get(nom);
+        Double m = pp.get(nom);
+        return patients.get(m);
+    }
+
+    public HashMap<String, Double> getPP() {
+        return pp;
+    }
+
+    public void setPP(HashMap<String, Double> pp) {
+        this.pp = pp;
+    }
+
+    public void addPP(String n, Double d) {
+        this.pp.put(n, d);
     }
 
     public boolean rendezVousExists(LocalDate date, LocalTime heure) {
