@@ -16,7 +16,7 @@ import javafx.stage.Stage;
  * @author WINDOWS 10
  */
 public class Main extends Application {
-    
+
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
@@ -37,8 +37,6 @@ public class Main extends Application {
      */
     public static void main(String[] args) {
         launch(args);
-        
-
 
     }
 

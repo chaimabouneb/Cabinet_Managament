@@ -1,5 +1,7 @@
 package cabinet_management;
 
-public enum Terme {
+import java.io.Serializable;
+
+public enum Terme implements Serializable {
     Long, moyen, court
 }

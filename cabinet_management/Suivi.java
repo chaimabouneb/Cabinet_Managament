@@ -1,10 +1,11 @@
 package cabinet_management;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-public class Suivi extends RendezVous {
+public class Suivi extends RendezVous implements Serializable {
     private double score;
     private boolean e;
     private List<Objectif> objectifs;

@@ -1,11 +1,14 @@
 package cabinet_management;
 
-public class Objectif {
+import java.io.Serializable;
+
+public class Objectif implements Serializable {
     private String nom;
     private Terme terme;
     private int note;
 
-    public void Objectif() {
+    public Objectif(String n) {
+        this.nom = n;
     };
 
     public void Objectif(String nom,
@@ -21,5 +24,9 @@ public class Objectif {
 
     public int getNote() {
         return note;
+    }
+
+    public String getNom() {
+        return this.nom;
     }
 }
