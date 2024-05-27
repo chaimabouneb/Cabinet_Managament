@@ -1,35 +1,27 @@
 package cabinet_management;
 
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 
-public class Qcu extends Question implements Reponse {
+class QCU extends Question implements Serializable {
+    private String bonneReponse;
+    private HashSet<String> propositions;
 
-    private int reponse;
-    private int correctanswer;
-
-    public Qcu(String question, List<String> options, Cat_Quest type, int cor, int n) {
-        super(question, options, type, n);
-        this.correctanswer = cor;
+    public QCU(String enonce, String bonneReponse, HashSet<String> propositions) {
+        super(enonce);
+        this.bonneReponse = bonneReponse;
+        this.propositions = propositions;
     }
 
-    public void setScore(double score) {
-        this.score = score;
+   
+
+    public HashSet<String> getPropositions() {
+        return propositions;
     }
 
-    
-
-    
-
-    @Override
-    public void setuserselction(List<Integer> reponses) {
-        if (reponses.size() > 1) {
-            throw new IllegalArgumentException("Only one answer can be selected.");
-        } else if (reponses.size() == 1) {
-            this.reponse = reponses.get(0);
-        } else {
-            // Handle case when no answer is selected
-            // For example, you can set reponse to a default value or throw an error
-            throw new IllegalArgumentException("No answer selected.");
-        }
+    public String getBonneReponse() {
+        return bonneReponse;
     }
 }
+

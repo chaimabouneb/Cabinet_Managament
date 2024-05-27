@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -16,11 +17,87 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cabinet_management.MainController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/20.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cabinet_management.MainController">
    <children>
       <AnchorPane prefHeight="200.0" prefWidth="200.0">
          <children>
-            <BorderPane layoutX="93.0" layoutY="85.0" prefHeight="600.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane fx:id="bo_init" prefHeight="600.0" prefWidth="1100.0" visible="false">
+               <children>
+                  <ListView fx:id="questionListView" layoutX="10.0" layoutY="10.0" onMouseClicked="#handleQuestionSelection" prefHeight="250.0" prefWidth="800.0" />
+                  <TextField fx:id="answerTextField" layoutX="20.0" layoutY="270.0" />
+                  <Button layoutX="300.0" layoutY="270.0" mnemonicParsing="false" onAction="#handleSubmitAnswer" text="submitt answer" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="BO" prefHeight="600.0" prefWidth="1100.0" visible="false">
+               <children>
+                  <TextArea fx:id="Conclusion_test" layoutX="840.0" layoutY="40.0" prefHeight="250.0" prefWidth="200.0" promptText="conclusion test" />
+                  <Button layoutX="750.0" layoutY="520.0" mnemonicParsing="false" onAction="#Enregistrer_Bo" text="SAVE ALL CHANGES" textFill="#3b9444" />
+                  <TextArea fx:id="projetNameField" layoutX="500.0" layoutY="420.0" prefHeight="90.0" prefWidth="150.0" promptText="saisi le projet therapeutique" />
+                  <Label layoutX="470.0" layoutY="380.0" text="Ajout projet therapeutique">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <Button layoutX="500.0" layoutY="520.0" mnemonicParsing="false" onAction="#handleSubmitProjet" text="Ajouter le projet" />
+                  <Button layoutX="120.0" layoutY="520.0" mnemonicParsing="false" onAction="#handleAddTrouble" text="ajouter trouble">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </Button>
+                  <TextField fx:id="troubleNameField" layoutX="120.0" layoutY="430.0" promptText="NOM DU TROUBLE" />
+                  <Label layoutX="120.0" layoutY="380.0" text="Ajout de trouble">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="categorieComboBox" layoutX="120.0" layoutY="470.0" prefWidth="150.0" promptText="Categorie" />
+                  <Button fx:id="ajouter_epreuve" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" onAction="#add_epreuve" text="Ajouter epreuve clinique" />
+                  <Button fx:id="ajouterQuest" layoutX="500.0" layoutY="20.0" mnemonicParsing="false" onAction="#new_quest" text="ajouter test questionnaire" />
+                  <TextField fx:id="nom_quest" layoutX="20.0" layoutY="320.0" promptText="NOM de TEST" />
+                  <Button fx:id="okk" layoutX="150.0" layoutY="320.0" mnemonicParsing="false" onAction="#ok_nom" text="OK NOM" />
+                  <Button fx:id="ajouterExo" layoutX="670.0" layoutY="20.0" mnemonicParsing="false" text="Ajouter test exercice" />
+                  <ListView fx:id="form" layoutX="20.0" layoutY="40.0" prefHeight="250.0" prefWidth="800.0" />
+                  <Button fx:id="submitScoreButton" layoutX="500.0" layoutY="320.0" mnemonicParsing="false" onAction="#handleSubmitScore" text="set score" />
+                  <ComboBox fx:id="scoreComboBox" layoutX="220.0" layoutY="320.0" prefWidth="100.0" promptText="SCORE" />
+                  <Label fx:id="totalScoreLabel" layoutX="350.0" layoutY="320.0" text="SCORE">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <TextField />
+                  <TextField />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="affichage_Bo" prefHeight="600.0" prefWidth="1100.0" visible="false" AnchorPane.leftAnchor="0.0">
+               <children>
+                  <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#Retour" text="RETOUR" />
+                  <Label layoutX="40.0" layoutY="40.0" text="Tableau de test questionnaire">
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                  </Label>
+                  <TableView fx:id="testTable" layoutX="50.0" layoutY="80.0" prefHeight="200.0" prefWidth="450.0">
+                     <columns>
+            <TableColumn fx:id="nomColumn" text="Nom" />
+            <TableColumn fx:id="scoreColumn" text="Score" />
+            <TableColumn fx:id="conclusionColumn" text="Conclusion" />
+        </columns>
+                  </TableView>
+                  <TextArea fx:id="troublesArea" layoutX="20.0" layoutY="380.0" prefHeight="200.0" prefWidth="300.0" />
+                  <TextArea fx:id="projetTherapeutiqueField" layoutX="390.0" layoutY="390.0" prefHeight="200.0" prefWidth="300.0" />
+                  <Label layoutX="50.0" layoutY="340.0" text="Liste des troubles">
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="390.0" layoutY="340.0" text="Projet therapeutique">
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+            <BorderPane fx:id="maine" layoutX="93.0" layoutY="85.0" prefHeight="600.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <top>
                   <AnchorPane prefHeight="61.0" prefWidth="1100.0" BorderPane.alignment="CENTER">
                      <children>
@@ -156,7 +233,6 @@
                                           <Font size="20.0" />
                                        </font>
                                     </Label>
-                                    <Button fx:id="addP_btn" layoutX="300.0" layoutY="50.0" mnemonicParsing="false" text="add patient" />
                                     <AnchorPane fx:id="patient_form" layoutX="6.0" layoutY="405.0" prefHeight="150.0" prefWidth="886.0">
                                        <children>
                                           <AnchorPane fx:id="extra_infoY" layoutX="180.0" prefHeight="150.0" prefWidth="700.0">
@@ -273,15 +349,13 @@
                               </AnchorPane>
                               <AnchorPane layoutX="646.0" layoutY="217.0" prefHeight="308.0" prefWidth="276.0" style="-fx-background-color: grey;">
                                  <children>
-                                    <TableView layoutX="36.0" layoutY="44.0" prefHeight="247.0" prefWidth="204.0">
+                                    <TableView fx:id="boTableView" layoutX="36.0" layoutY="44.0" onMouseClicked="#handleBoTableClicked" prefHeight="247.0" prefWidth="204.0">
                                        <columns>
                                           <TableColumn prefWidth="75.0" text="bilan numX" />
                                           <TableColumn prefWidth="94.0001220703125" text="date creation" />
                                        </columns>
                                     </TableView>
-                                    <TextField layoutX="121.0" layoutY="1.0" prefHeight="25.0" prefWidth="89.0" promptText="search " />
-                                    <Button layoutX="225.0" layoutY="1.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="30.0" text="ok" />
-                                    <Button layoutX="29.0" layoutY="13.0" mnemonicParsing="false" text="add" />
+                                    <Button layoutX="29.0" layoutY="13.0" mnemonicParsing="false" onAction="#Add_bo" text="add" />
                                  </children>
                               </AnchorPane>
                            </children>

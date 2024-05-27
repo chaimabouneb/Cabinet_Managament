@@ -4,28 +4,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 public class Bo implements Serializable {
-    private List<Epreuve> epreuvescliniques;
+    private LocalDate crea ;
 
-    private List<Epreuve> epreuvesCliniques;
+    private List<Test> epreuvesCliniques;
 
     private List<Trouble> Diagnostic;
     private String projettherapeutic;
 
-    public void Bo() {
+    public Bo(LocalDate d) {
+        this.crea=d;
         this.epreuvesCliniques = new ArrayList<>();
         this.Diagnostic = new ArrayList<>();
     };
 
-    public void Bo(List<Epreuve> epreuvescliniques, List<Trouble> Diagnostic, String projettherapeutic) {
+
+
+    public void Bo(List<Test> epreuvescliniques, List<Trouble> Diagnostic, String projettherapeutic) {
         this.epreuvesCliniques = epreuvescliniques;
         this.Diagnostic = Diagnostic;
         this.projettherapeutic = projettherapeutic;
 
     };
 
-    public void ajouterEpreuve(Epreuve e) {
+    public void ajouterEpreuve(Test e) {
         epreuvesCliniques.add(e);
     }
 
@@ -38,11 +42,11 @@ public class Bo implements Serializable {
     }
 
     // Getters and setters
-    public List<Epreuve> getEpreuvesCliniques() {
+    public List<Test> getEpreuvesCliniques() {
         return epreuvesCliniques;
     }
 
-    public void setEpreuvesCliniques(List<Epreuve> epreuvesCliniques) {
+    public void setEpreuvesCliniques(List<Test> epreuvesCliniques) {
         this.epreuvesCliniques = epreuvesCliniques;
     }
 
@@ -60,5 +64,13 @@ public class Bo implements Serializable {
 
     public void setProjetTherapeutique(String projetTherapeutique) {
         this.projettherapeutic = projetTherapeutique;
+    }
+
+    public LocalDate getCrea() {
+        return crea;
+    }
+
+    public void setCrea(LocalDate crea) {
+        this.crea = crea;
     }
 }

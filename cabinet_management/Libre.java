@@ -1,25 +1,17 @@
 package cabinet_management;
 
-public class Libre extends Question {
-    private String reponse;
-    private String correctreponse;
-    private double scoree;
+import java.io.Serializable;
 
-    public Libre() {
-    };
+class ReponseLibre extends Question implements Serializable {
+    private String bonneReponse;
 
-    public Libre(String question, Cat_Quest type, String correction, int n) {
-        super(question, type, n);
-        correctreponse = correction;
-
-    };
-
-    public void setRponse(String s) {
-        reponse = s;
+    public ReponseLibre(String enonce, String bonneReponse) {
+        super(enonce);
+        this.bonneReponse = bonneReponse;
     }
 
-    public void setscore(double s) {
-        this.scoree = s;
+    
+    public String getBonneReponse() {
+        return bonneReponse;
     }
-
 }

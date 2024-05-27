@@ -44,11 +44,9 @@ public class Dossier implements Serializable {
     }
 
     public void ajouterBo(Bo b) {
-        if (b.getClass().getName().equals("Boinitial")) {
-            System.out.println("there is already a bo");
-        } else {
+       
             bilans.add(b);
-        }
+        
     }
 
     public Patient getPatient() {
@@ -85,6 +83,15 @@ public class Dossier implements Serializable {
 
     public void setnumdossier(Double n) {
         this.numerodossier = n;
+    }       
+    public HashSet<Bo> getBo(){
+        return bilans;
+
     }
 
+    public void setBo(HashSet<Bo> b){
+        bilans=b;
+    }
+
+    
 }
